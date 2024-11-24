@@ -1,0 +1,35 @@
+/.env
+.venv/
+!/tests/.env
+/tests/.env
+
+
+# Pycharm stuff
+.idea
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+
+# cache
+/.mypy_cache
+
+# test utils
+/.coverage
+/coverage.xml
+
+# for MAC
+.DS_Store
+/tests/.env.local

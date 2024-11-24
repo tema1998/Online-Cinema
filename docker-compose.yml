@@ -1,0 +1,143 @@
+services:
+  auth_service:
+    build:
+      context: .
+      dockerfile: auth_service/src/Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "8081:8081" #TODO to delete on prod
+    depends_on:
+      db_auth:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  db_auth:
+    image: postgres:15
+    container_name: db_auth
+    environment:
+      POSTGRES_DB: ${AUTH_POSTGRES_DB}
+      POSTGRES_USER: ${AUTH_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${AUTH_POSTGRES_PASSWORD}
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB'" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    restart: always
+    ports:
+      - "5433:5432" #TODO to delete on prod
+
+  redis:
+    image: redis:7
+    restart: always
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  rabbitmq:
+    image: rabbitmq:3-management  # Includes the management plugin for monitoring
+    ports:
+      - "${RABBITMQ_CONNECTION_PORT}:${RABBITMQ_CONNECTION_PORT}" # Port for RabbitMQ
+      - "${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}" # Port for the RabbitMQ Management UI
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "ping" ]
+      interval: 10s
+      retries: 5
+    env_file:
+      - .env
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  postgres:
+    image: postgres:13
+    ports:
+      - "5432:5432" #TODO to delete on prod
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+    restart: unless-stopped  # Optional: Restart policy for resilience
+
+  fastapi_app:
+    build:
+      context: .
+      dockerfile: notification_gen_app/infra/Dockerfile
+    ports:
+      - "8080:8080" #TODO to delete on prod
+    env_file:
+      - .env
+    volumes:
+      - ./notification_gen_app:/notification_gen_app
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  consumer_service:
+    build:
+      context: .
+      dockerfile: consumer_messages/infra/Dockerfile
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - .env
+    volumes:
+      - ./consumer_messages:/consumer_messages
+
+  consumer_recorder_service:
+    build:
+      context: .
+      dockerfile: consumer_notification_recorder/infra/Dockerfile
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - .env
+    volumes:
+      - ./consumer_notification_recorder:/consumer_notification_recorder
+
+  subscription_service:
+    build:
+      context: .
+      dockerfile: subscription_service/Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "8082:8082" #TODO to delete on prod
+    depends_on:
+      subscription_db:
+        condition: service_healthy
+
+  subscription_db:
+    image: postgres:15
+    container_name: subscription_db
+    environment:
+      POSTGRES_DB: ${SUBSCRIPTION_POSTGRES_DB}
+      POSTGRES_USER: ${SUBSCRIPTION_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${SUBSCRIPTION_POSTGRES_PASSWORD}
+    volumes:
+      - subscription_db:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB'" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    restart: always
+    ports:
+      - "5434:5432" #TODO to delete on prod
+
+
+
+volumes:
+  rabbitmq_data:
+  postgres_data:
+  subscription_db:

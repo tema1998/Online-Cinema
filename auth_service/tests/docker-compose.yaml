@@ -1,0 +1,47 @@
+version: "3"
+
+services:
+  db_auth_test:
+    image: postgres:15
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB'" ]
+    restart: always
+    ports:
+      - "5432:5432" #TODO to delete on prod
+
+  redis_test:
+    image: redis:5.0.7-alpine
+    container_name: redis
+    restart: always
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+    ports:
+      - "6379:6379" #TODO to delete on prod
+
+  auth_backend:
+    build:
+      context: ../
+      dockerfile: src/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      db_auth_test:
+        condition: service_healthy
+      redis_test:
+        condition: service_healthy
+    ports:
+      - "8080:8080" #TODO to delete on prod
+
+  functional-tests:
+    build:
+      context: ../
+      dockerfile: tests/Dockerfile
+    container_name: functional-test
+    env_file:
+      - .env
+    depends_on:
+      - auth_backend

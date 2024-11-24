@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "subscription-service"
+version = "0.1.0"
+description = ""
+authors = ["Artem Volinets <artemvol1998@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pydantic-settings = "^2.6.1"
+fastapi = "^0.115.5"
+uvicorn = "^0.32.0"
+gunicorn = "^23.0.0"
+itsdangerous = "^2.2.0"
+pydantic = {extras = ["email"], version = "^2.9.2"}
+orjson = "^3.10.11"
+python-jose = "^3.3.0"
+alembic = "^1.14.0"
+asyncpg = "^0.30.0"
+psycopg2-binary = "^2.9.10"
+sqlalchemy-utils = "^0.41.2"
+requests = "^2.32.3"
+yookassa = "^3.4.1"
+aiohttp = "^3.11.7"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
