@@ -1,3 +1,4 @@
+import json
 from abc import ABC, abstractmethod
 from typing import Optional, Any
 from uuid import UUID
@@ -12,5 +13,12 @@ class PaymentService(ABC):
         :param total_price:
         :param customer_email:
         :return: Payment ID, Payment URL.
+        """
+        pass
+    @abstractmethod
+    async def process_payment(self, request:json) -> Optional[Any]:
+        """
+        Method for processing query from payment service.
+        :param request:
         """
         pass

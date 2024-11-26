@@ -27,7 +27,7 @@ class OrderService:
                 detail=f"Subscription with ID={order_data['subscription_id']} doesn't exist."
             )
 
-        order = OrderCreate(order_status='Processed', user_id=user_info['id'], user_email=user_info['email'],
+        order = OrderCreate(status='Processed', user_id=user_info['id'], user_email=user_info['email'],
                             total_price=subscription_price*order_data['number_of_month'], **order_data)
 
         order_orm = Order(**order.model_dump())

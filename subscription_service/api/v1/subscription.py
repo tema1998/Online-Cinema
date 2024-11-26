@@ -1,8 +1,7 @@
 import logging
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Body, status, HTTPException, Request
-from fastapi.encoders import jsonable_encoder
+from fastapi import APIRouter, Depends, Body, status, Request
 
 from schemas.entity import OrderOut, OrderIn
 from services.payment_service import PaymentService
@@ -27,7 +26,7 @@ async def create_order(
         order_service: OrderService = Depends(get_order_service),
         payment_service: PaymentService = Depends(get_yookassa_service),
 ):
-    #TODO Async get user info from AUTH
+
     order = await order_service.create_order(order_data.model_dump(), user_info)
 
     # Create payment
@@ -41,5 +40,14 @@ async def create_order(
     # Convert the saved user data to the response model
     return OrderOut(**order.to_dict())
 
-
-
+@router.post(
+    '/payment-notification',
+    summary="Catch notification from payment service about status of user's payment.",
+    status_code=status.HTTP_200_OK
+)
+async def get_payment_notification(
+        request: Request,
+        payment_service: PaymentService = Depends(get_yookassa_service)
+):
+    json_request = await request.json()
+    result = await payment_service.process_payment(json_request)

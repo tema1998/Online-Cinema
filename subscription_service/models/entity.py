@@ -2,11 +2,10 @@ import uuid
 from datetime import datetime
 from typing import List
 
-from sqlalchemy import Column, DateTime, String, Boolean, ForeignKey, ARRAY, Text, text, DECIMAL, INTEGER
+from sqlalchemy import Column, DateTime, String, ForeignKey, DECIMAL, INTEGER, ARRAY
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.inspection import inspect
 from sqlalchemy.orm import relationship, Mapped, mapped_column
-from sqlalchemy_utils import ChoiceType
 
 from db.db_utils import Base
 
@@ -30,6 +29,7 @@ class Subscription(Base, UUIDMixin, TimeStampedMixin):
     description = Column(String(255))
     price = Column(DECIMAL, nullable=False)
     orders: Mapped[List["Order"]] = relationship(back_populates="subscription")
+    permissions = Column(ARRAY(String))
 
     def __repr__(self) -> str:
         return f"<Subscription(id={self.id}, name='{self.name}', description='{self.description}')>"
@@ -38,7 +38,7 @@ class Order(Base, UUIDMixin, TimeStampedMixin):
     __tablename__ = 'orders'
 
     total_price = Column(DECIMAL, nullable=False)
-    order_status = Column(String(255))
+    status = Column(String(255))
     number_of_month = Column(INTEGER, nullable=False)
     user_id = Column(UUID, nullable=True)
     user_email = Column(String(255), nullable=True)
