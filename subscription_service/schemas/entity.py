@@ -10,7 +10,7 @@ class OrderIn(BaseModel):
 
 class OrderCreate(OrderIn):
     total_price: float = Field(None, gt=0)
-    order_status: str
+    status: str
     user_id: UUID
     user_email: EmailStr
 

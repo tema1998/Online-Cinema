@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     # Yookassa
     yookassa_shop_id : str = os.getenv("YOOKASSA_SHOP_ID", "shop_id")
     yookassa_secret_key : str = os.getenv("YOOKASSA_SECRET_KEY", "secret_key")
+    yookassa_return_url : str = os.getenv("YOOKASSA_RETURN_URL", "https://yandex-team-number-2.ru")
     @property
     def dsn(self) -> str:
         return f'postgresql+asyncpg://{self.pg_user}:{self.pg_pass}@{self.pg_host}:{self.pg_port}/{self.pg_db}'
