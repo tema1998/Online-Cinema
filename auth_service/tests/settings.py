@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     # Project name used in Swagger documentation
-    project_name: str = Field(default="movies", json_schema_extra={"env": "PROJECT_NAME"})
+    project_name: str = Field(default="movies", json_schema_extra={"env": "AUTH_PROJECT_NAME"})
 
     api_schema: ClassVar[str] = 'http://'
     api_host: str = Field(default="127.0.0.1", json_schema_extra={"env": "API_HOST"})

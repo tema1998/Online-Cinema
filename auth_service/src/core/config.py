@@ -12,18 +12,18 @@ class Settings(BaseSettings):
     base_dir: ClassVar[str] = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     # Название проекта. Используется в Swagger-документации
-    project_name: str = os.getenv("PROJECT_NAME", "movies")
+    project_name: str = os.getenv("AUTH_PROJECT_NAME", "movies")
 
     # Настройки подключения к Redis
     redis_host: str = os.getenv("REDIS_HOST", "redis")
     redis_port: int = os.getenv("REDIS_PORT", 6379)
 
     # Настройки подключения к PostgreSQL
-    pg_user: str = os.getenv("AUTH_POSTGRES_USER", "user_auth")
-    pg_pass: str = os.getenv("AUTH_POSTGRES_PASSWORD", "123456")
-    pg_host: str = os.getenv("AUTH_POSTGRES_HOST", "localhost")
-    pg_port: int = os.getenv("AUTH_POSTGRES_PORT", 5433)
-    pg_db: str = os.getenv("AUTH_POSTGRES_DB", "db_auth")
+    pg_user: str = os.getenv("AUTH_DB_USER", "user_auth")
+    pg_pass: str = os.getenv("AUTH_DB_PASSWORD", "123456")
+    pg_host: str = os.getenv("AUTH_DB_HOST", "localhost")
+    pg_port: int = os.getenv("AUTH_DB_PORT", 5433)
+    pg_db: str = os.getenv("AUTH_DB", "db_auth")
     pg_engine: str = os.getenv("POSTGRES_ENGINE", "django.db.backends.postgresql")
 
     sqlalchemy_echo: bool = os.getenv("SQLALCHEMY_ECHO", False)
