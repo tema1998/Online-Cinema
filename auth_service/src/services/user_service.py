@@ -77,11 +77,17 @@ class UserService:
                 """
         # Check if the user already exists by login
         existing_user = await self.db.fetch_by_query_all(User, 'login', user_data['login'])
+        existing_email = await self.db.fetch_by_query_all(User, 'email', user_data['email'])
 
         if existing_user:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="User with this login already exists."
+            )
+        if existing_email:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User with this email already exists."
             )
 
         # Use the create_user method to handle the actual creation logic

@@ -8,10 +8,9 @@ from pydantic import BaseModel, constr, Field, EmailStr
 class UserRegister(BaseModel):
     login: str
     password: str
+    email: EmailStr
     first_name: Optional[str] = None
     last_name: Optional[str] = None
-    is_active: Optional[bool] = True
-    is_superuser: Optional[bool] = False
 
 
 class SocialUserRegister(BaseModel):
@@ -34,6 +33,7 @@ class UserInfoOut(BaseModel):
 class UserInDB(BaseModel):
     id: UUID
     login: str
+    email: EmailStr
     first_name: Optional[str] = None
     last_name: Optional[str] = None
 
