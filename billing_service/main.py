@@ -16,7 +16,7 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(
-    title=config.subsctiption_project_name,
+    title=config.billing_project_name,
     docs_url='/api/openapi',
     openapi_url='/api/openapi.json',
     default_response_class=ORJSONResponse,
@@ -44,6 +44,8 @@ app.add_middleware(
     SessionMiddleware,
     secret_key=config.secret_key  # Ensure this is a strong, random secret key
 )
+
+#TODO: Turn on middleware on prod.
 
 # @app.middleware('http')
 # async def before_request(request: Request, call_next):

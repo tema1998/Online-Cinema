@@ -26,10 +26,10 @@ async def create_order(
         order_service: OrderService = Depends(get_order_service),
         payment_service: PaymentService = Depends(get_yookassa_service),
 ):
-
+    # Create order
     order = await order_service.create_order(order_data.model_dump(), user_info)
 
-    # Create payment
+    # Create Yookassa payment
     payment_id, payment_url  = payment_service.create_payment(order_id=order.to_dict()['id'],
                                                              total_price=order.to_dict()['total_price'],
                                                              customer_email=order.to_dict()['user_email'])

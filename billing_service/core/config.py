@@ -1,13 +1,12 @@
 import os
 from logging import config as logging_config
 from core.logger import LOGGING
-from typing import ClassVar
 
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    subsctiption_project_name: str = os.getenv("BILLING_PROJECT_NAME", "Subscription")
+    billing_project_name: str = os.getenv("BILLING_PROJECT_NAME", "Subscription")
 
     # PG settings
     pg_user: str = os.getenv("BILLING_DB_USER", "user_subscription")

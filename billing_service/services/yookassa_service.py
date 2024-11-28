@@ -18,9 +18,17 @@ class YookassaService(PaymentService):
         Configuration.account_id = self.config.yookassa_shop_id
         Configuration.secret_key = self.config.yookassa_secret_key
 
-    #TODO: use user's email
     def create_payment(self, order_id: UUID, total_price: float, customer_email: str) -> tuple:
+        """
+        Method for creating payment in Yookassa service.
+        :param order_id:
+        :param total_price:
+        :param customer_email:
+        :return:
+        """
+
         key=str(uuid.uuid4())
+
         payment = Payment.create(
             {
                 "amount": {
@@ -42,6 +50,11 @@ class YookassaService(PaymentService):
         return payment.id, payment.confirmation.confirmation_url
 
     async def process_payment(self, request:dict):
+        """
+        Method for processing of response from Yookassa service
+        :param request:
+        :return:
+        """
 
         order = await self.db.fetch_by_query_first(Order, 'payment_id', request["object"]["id"])
         subscription = await self.db.fetch_by_query_first(Subscription, 'id', order.subscription_id)

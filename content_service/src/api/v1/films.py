@@ -45,15 +45,17 @@ async def search_films(
     summary="Retrieve detailed information about a film")
 @cache(expire=60)
 async def film_details(
-        film_id: str = Path(..., description="The ID of the film"),
+        film_id: str = Path(..., description="The ID of the film."),
         film_service: FilmService = Depends(get_film_service),
         user: Annotated[dict, Depends(security_jwt)] = None
 ) -> FilmDetail:
     film = await film_service.get_by_id(film_id)
 
+    # Check if the movie exists.
     if not film:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='Film not found')
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='The film not found.')
 
+    # Check if the user has permissions to watch film.
     if not check_user_permission_for_film(user, film):
         raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED, detail='This film only for premium users.')
 

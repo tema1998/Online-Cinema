@@ -8,7 +8,7 @@ class PaymentService(ABC):
     @abstractmethod
     async def create_payment(self, order_id: UUID, total_price: float, customer_email: str) -> Optional[Any]:
         """
-        Method for creating payment
+        Method for creating payment.
         :param order_id:
         :param total_price:
         :param customer_email:
@@ -18,7 +18,7 @@ class PaymentService(ABC):
     @abstractmethod
     async def process_payment(self, request:json) -> Optional[Any]:
         """
-        Method for processing query from payment service.
+        Method for processing of response from payment service.
         :param request:
         """
         pass
