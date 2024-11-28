@@ -9,6 +9,8 @@ from models.genre import GenreUUID
 from models.person import PersonUUID
 from services.bearer import security_jwt
 from services.film import FilmService, get_film_service
+from services.permission_service import check_user_permission_for_film
+
 from starlette import status
 
 router = APIRouter()
@@ -24,7 +26,6 @@ async def search_films(
         query: Optional[str] = Query(None, description="Search query for film titles"),
         film_service: FilmService = Depends(get_film_service),
         pagination: PaginationParams = Depends(PaginationParams),
-        user: Annotated[dict, Depends(security_jwt)] = None
 ) -> List[FilmListOutput]:
     films = await film_service.get_films_list_filtered_searched_sorted(
         query=query,
@@ -49,8 +50,14 @@ async def film_details(
         user: Annotated[dict, Depends(security_jwt)] = None
 ) -> FilmDetail:
     film = await film_service.get_by_id(film_id)
+
     if not film:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='film not found')
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail='Film not found')
+
+    if not check_user_permission_for_film(user, film):
+        raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED, detail='This film only for premium users.')
+
+
     return FilmDetail(
         uuid=film.get('id'),
         title=film.get('title'),
@@ -87,7 +94,6 @@ async def list_films_imbd_sorted(
         genre: Optional[str] = Query(None, description="Filter by genre ID"),
         film_service: FilmService = Depends(get_film_service),
         pagination: PaginationParams = Depends(PaginationParams),
-        user: Annotated[dict, Depends(security_jwt)] = None
 ) -> List[FilmListOutput]:
     films = await film_service.get_films_list_filtered_searched_sorted(
         query=query,
@@ -111,7 +117,6 @@ async def list_films_imbd_sorted(
         film_id: str = Path(..., description="The ID of the film for which to find similar films"),
         pagination: PaginationParams = Depends(PaginationParams),
         film_service: FilmService = Depends(get_film_service),
-        user: Annotated[dict, Depends(security_jwt)] = None
 ) -> List[FilmListOutput]:
     films = await film_service.get_similar_films(
         film_id=film_id,

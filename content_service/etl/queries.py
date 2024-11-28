@@ -12,6 +12,7 @@ def generate_filmwork_query(last_modified, size_of_batch):
                     fw.description, 
                     fw.rating, 
                     fw.type,  
+                    fw.premium,  
                     fw.modified, 
                     JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
                         'id', g.id, 

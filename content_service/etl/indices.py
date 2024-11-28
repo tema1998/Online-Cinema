@@ -51,6 +51,9 @@ movie_index = {
             "imdb_rating": {
                 "type": "float"
             },
+            "premium": {
+                "type": "boolean"
+            },
             "genres": {
                 "type": "nested",
                 "dynamic": "strict",

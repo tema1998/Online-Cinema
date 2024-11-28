@@ -45,6 +45,7 @@ class User(Base, UUIDMixin, TimeStampedMixin):
     last_name = Column(String(50))
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
+    is_premium = Column(Boolean, default=False)
 
     roles = relationship('UserRole', back_populates='user')
     login_history = relationship('UserLoginHistory', back_populates='user')

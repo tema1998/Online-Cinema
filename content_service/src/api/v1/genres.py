@@ -22,7 +22,6 @@ router = APIRouter()
 async def genres(
         genre_service: GenreService = Depends(get_genre_service),
         pagination: PaginationParams = Depends(PaginationParams),
-        user: Annotated[dict, Depends(security_jwt)] = None
 ) -> list[Genre]:
     genres_list = await genre_service.genre_list(
         pagination.page, pagination.page_size
@@ -43,7 +42,6 @@ async def genres(
 async def genres(
         genre_id: str,
         genre_service: GenreService = Depends(get_genre_service),
-        user: Annotated[dict, Depends(security_jwt)] = None
 ) -> Genre:
     genre = await genre_service.get_by_id(
         genre_id
@@ -64,7 +62,6 @@ async def genres(
         genre_id: str = Path(..., description="The ID of the genre for which to find films"),
         pagination: PaginationParams = Depends(PaginationParams),
         genre_service: GenreService = Depends(get_genre_service),
-        user: Annotated[dict, Depends(security_jwt)] = None
 ) -> List[FilmListOutput]:
     films = await genre_service.get_popular_films(
         genre_id=genre_id,

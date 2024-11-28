@@ -222,6 +222,7 @@ class UserService:
             "last_name": user.last_name,
             "is_superuser": user.is_superuser,
             "is_active": user.is_active,
+            "is_premium": user.is_premium,
         })
         refresh_token = self.create_refresh_token(user.id)
 

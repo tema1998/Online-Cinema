@@ -21,6 +21,7 @@ class DataTransformer:
                                          title=entry["title"],
                                          description=entry["description"],
                                          imdb_rating=entry["rating"],
+                                         premium=entry["premium"],
                                          genres=entry["genres"],
                                          actors=entry["actors"],
                                          directors=entry["directors"],

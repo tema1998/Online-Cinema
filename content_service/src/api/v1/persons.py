@@ -22,7 +22,6 @@ async def person_search(
         query: str = Query('', description="Search query for person name"),
         pagination: PaginationParams = Depends(PaginationParams),
         person_service: PersonService = Depends(get_person_service),
-        user: Annotated[dict, Depends(security_jwt)] = None
 ) -> list[PersonWithFilms]:
     found_persons = await person_service.person_search(
         query=query,
@@ -45,7 +44,6 @@ async def person_search(
 async def person(
         pagination: PaginationParams = Depends(PaginationParams),
         person_service: PersonService = Depends(get_person_service),
-        user: Annotated[dict, Depends(security_jwt)] = None
 ) -> list[PersonUUID]:
     person_list = await person_service.person_list(
         page_size=pagination.page_size,
@@ -68,7 +66,6 @@ async def persons(
         person_id: str = Path(..., description="The ID of person to find films with this person."),
         pagination: PaginationParams = Depends(PaginationParams),
         person_service: PersonService = Depends(get_person_service),
-        user: Annotated[dict, Depends(security_jwt)] = None
 ) -> PersonUUID:
     person = await person_service.person_detail(
         person_id=person_id,
@@ -92,7 +89,6 @@ async def films_with_person(
         person_id: str,
         pagination: PaginationParams = Depends(PaginationParams),
         person_service: PersonService = Depends(get_person_service),
-        user: Annotated[dict, Depends(security_jwt)] = None
 ) -> list[FilmListOutput] | None:
     films = await person_service.person_films(
         person_id=person_id,
