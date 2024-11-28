@@ -28,6 +28,7 @@ class Film(Base):
     title: str
     description: str = None
     imdb_rating: Optional[float] = None
+    premium: Optional[bool] = False
     genres: List[Genre] | None = []
     actors: List[PersonData] | None = []
     directors: List[PersonData] | None = []
