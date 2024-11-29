@@ -13,11 +13,11 @@ class BaseProjectSettings(BaseSettings):
     project_name: str = Field('consumer_app', alias='PROJECT_NAME')
 
     # RabbitMQ connection settings
-    rabbitmq_host: str = Field('127.0.0.1', alias='RABBITMQ_HOST')
-    rabbitmq_connection_port: int = Field(5672, alias='RABBITMQ_CONNECTION_PORT')
-    rabbitmq_management_port: int = Field(15672, alias='RABBITMQ_MANAGEMENT_PORT')
-    rabbitmq_default_user: str = Field('guest', alias='RABBITMQ_DEFAULT_USER')
-    rabbitmq_default_pass: str = Field('guest', alias='RABBITMQ_DEFAULT_PASS')
+    rabbitmq_host: str = Field('127.0.0.1', alias='RABBITMQ_NOTIFICATION_HOST')
+    rabbitmq_connection_port: int = Field(5672, alias='RABBITMQ_NOTIFICATION_CONNECTION_PORT')
+    rabbitmq_management_port: int = Field(15672, alias='RABBITMQ_NOTIFICATION_MANAGEMENT_PORT')
+    rabbitmq_default_user: str = Field('guest', alias='RABBITMQ_NOTIFICATION_DEFAULT_USER')
+    rabbitmq_default_pass: str = Field('guest', alias='RABBITMQ_NOTIFICATION_DEFAULT_PASS')
 
     # RabbitMQ queue and exchange settings
     dlx_exchange: str = Field('dlx_exchange', alias='DLX_EXCHANGE')

@@ -93,6 +93,7 @@ services:
       interval: 10s
       timeout: 3s
       retries: 3
+    restart: always
     ports:
       - "5435:5432" #TODO to delete on prod
 
@@ -114,6 +115,22 @@ services:
     ports:
       - "5434:5432" #TODO to delete on prod
 
+  db_notification:
+    image: postgres:13
+    container_name: db_notification
+    ports:
+      - "5436:5432" #TODO to delete on prod
+    volumes:
+      - db_notification_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${NOTIFICATION_DB_USER} -d ${NOTIFICATION_DB}" ]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+    restart: always
+
   redis:
     image: redis:5.0.7-alpine
     container_name: redis
@@ -126,79 +143,64 @@ services:
       timeout: 3s
       retries: 3
 
-#  rabbitmq:
-#    image: rabbitmq:3-management  # Includes the management plugin for monitoring
-#    ports:
-#      - "${RABBITMQ_CONNECTION_PORT}:${RABBITMQ_CONNECTION_PORT}" # Port for RabbitMQ
-#      - "${RABBITMQ_MANAGEMENT_PORT}:${RABBITMQ_MANAGEMENT_PORT}" # Port for the RabbitMQ Management UI
-#    healthcheck:
-#      test: [ "CMD", "rabbitmqctl", "ping" ]
-#      interval: 10s
-#      retries: 5
-#    env_file:
-#      - .env
-#    volumes:
-#      - rabbitmq_data:/var/lib/rabbitmq
-#
-#TODO: Rename postgres
-#  postgres:
-#    image: postgres:13
-#    ports:
-#      - "5432:5432" #TODO to delete on prod
-#    volumes:
-#      - postgres_data:/var/lib/postgresql/data
-#    env_file:
-#      - .env
-#    healthcheck:
-#      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
-#      interval: 10s
-#      retries: 5
-#      timeout: 5s
-#    restart: unless-stopped  # Optional: Restart policy for resilience
+  rabbitmq_notification:
+    image: rabbitmq:3-management  # Includes the management plugin for monitoring
+    container_name: rabbitmq_notification
+    ports:
+      - "${RABBITMQ_NOTIFICATION_CONNECTION_PORT}:${RABBITMQ_NOTIFICATION_CONNECTION_PORT}" # Port for RabbitMQ
+      - "${RABBITMQ_NOTIFICATION_MANAGEMENT_PORT}:${RABBITMQ_NOTIFICATION_MANAGEMENT_PORT}" # Port for the RabbitMQ Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_NOTIFICATION_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_NOTIFICATION_DEFAULT_PASS}
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "ping" ]
+      interval: 10s
+      retries: 5
+    volumes:
+      - rabbitmq_notification_data:/var/lib/rabbitmq
 
-#TODO: Rename fastapi_app
-#  fastapi_app:
-#    build:
-#      context: .
-#      dockerfile: notification_gen_app/infra/Dockerfile
-#    ports:
-#      - "8080:8080" #TODO to delete on prod
-#    env_file:
-#      - .env
-#    volumes:
-#      - ./notification_gen_app:/notification_gen_app
-#    depends_on:
-#      rabbitmq:
-#        condition: service_healthy
-#
-#  consumer_service:
-#    build:
-#      context: .
-#      dockerfile: consumer_messages/infra/Dockerfile
-#    depends_on:
-#      rabbitmq:
-#        condition: service_healthy
-#    env_file:
-#      - .env
-#    volumes:
-#      - ./consumer_messages:/consumer_messages
-#
-#  consumer_recorder_service:
-#    build:
-#      context: .
-#      dockerfile: consumer_notification_recorder/infra/Dockerfile
-#    depends_on:
-#      rabbitmq:
-#        condition: service_healthy
-#    env_file:
-#      - .env
-#    volumes:
-#      - ./consumer_notification_recorder:/consumer_notification_recorder
+  notification_service:
+    build:
+      context: .
+      dockerfile: notification_service/infra/Dockerfile
+    ports:
+      - "8083:8080" #TODO to delete on prod
+    env_file:
+      - .env
+    volumes:
+      - ./notification_service:/notification_service
+    depends_on:
+      rabbitmq_notification:
+        condition: service_healthy
+
+  notification_consumer_service:
+    build:
+      context: .
+      dockerfile: consumer_messages/infra/Dockerfile
+    depends_on:
+      rabbitmq_notification:
+        condition: service_healthy
+    env_file:
+      - .env
+    volumes:
+      - ./consumer_messages:/consumer_messages
+
+  notification_consumer_recorder_service:
+    build:
+      context: .
+      dockerfile: notification_consumer_recorder_service/infra/Dockerfile
+    depends_on:
+      rabbitmq_notification:
+        condition: service_healthy
+    env_file:
+      - .env
+    volumes:
+      - ./notification_consumer_recorder_service:/notification_consumer_recorder_service
 
 
   elasticsearch:
     image: elasticsearch:8.16.1
-    container_name: elastic
+    container_name: elasticsearch
     healthcheck:
       test: curl -s http://elasticsearch:9200 >/dev/null || exit 1
       interval: 20s
@@ -258,8 +260,8 @@ services:
       - "16686:16686"  #TODO to delete on prod
 
 volumes:
-  rabbitmq_data:
-  postgres_data:
+  rabbitmq_notification_data:
+  db_notification_data:
   db_billing:
   db_content:
   db_auth:
