@@ -10,7 +10,8 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from core.config import config
 
-async def make_request_to_auth_service(access_token:str) -> dict:
+
+async def make_request_to_auth_service(access_token: str) -> dict:
     # Request parameters
     url = config.auth_service_get_user_info_url
     body = {"access_token": access_token}
@@ -18,21 +19,36 @@ async def make_request_to_auth_service(access_token:str) -> dict:
     try:
         # Make async request to Auth-service
         async with aiohttp.ClientSession() as session:
-            async with session.post(url=url, data=json.dumps(body), headers={"Content-Type": "application/json"}) as response:
+            async with session.post(
+                url=url,
+                data=json.dumps(body),
+                headers={"Content-Type": "application/json"},
+            ) as response:
                 response_json = await response.json()
     except:
-        raise HTTPException(status_code=http.HTTPStatus.BAD_REQUEST,
-                            detail='Error connecting to the authorization service')
+        raise HTTPException(
+            status_code=http.HTTPStatus.BAD_REQUEST,
+            detail="Error connecting to the authorization service",
+        )
 
     if response.status == 401:
-        raise HTTPException(status_code=http.HTTPStatus.FORBIDDEN, detail='Invalid authorization code.')
+        raise HTTPException(
+            status_code=http.HTTPStatus.FORBIDDEN, detail="Invalid authorization code."
+        )
     if response.status != 200:
-        raise HTTPException(status_code=http.HTTPStatus.BAD_REQUEST,
-                            detail='Error connecting to the authorization service')
+        raise HTTPException(
+            status_code=http.HTTPStatus.BAD_REQUEST,
+            detail="Error connecting to the authorization service",
+        )
 
     # Get user's data from json response
-    return {'id': response_json.get('id'), 'email': response_json.get('email'),
-            'first_name': response_json.get('first_name'), 'last_name': response_json.get('last_name'),}
+    return {
+        "id": response_json.get("id"),
+        "email": response_json.get("email"),
+        "first_name": response_json.get("first_name"),
+        "last_name": response_json.get("last_name"),
+    }
+
 
 class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
@@ -41,9 +57,15 @@ class JWTBearer(HTTPBearer):
     async def __call__(self, request: Request) -> dict:
         credentials: HTTPAuthorizationCredentials = await super().__call__(request)
         if not credentials:
-            raise HTTPException(status_code=http.HTTPStatus.FORBIDDEN, detail='Invalid authorization code.')
-        if not credentials.scheme == 'Bearer':
-            raise HTTPException(status_code=http.HTTPStatus.UNAUTHORIZED, detail='Only Bearer token might be accepted')
+            raise HTTPException(
+                status_code=http.HTTPStatus.FORBIDDEN,
+                detail="Invalid authorization code.",
+            )
+        if not credentials.scheme == "Bearer":
+            raise HTTPException(
+                status_code=http.HTTPStatus.UNAUTHORIZED,
+                detail="Only Bearer token might be accepted",
+            )
         user_info = await self.get_user_info_from_auth_service(credentials.credentials)
         return user_info
 

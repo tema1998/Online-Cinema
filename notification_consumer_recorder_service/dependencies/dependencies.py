@@ -22,6 +22,7 @@ async def get_rabbitmq_channel():
     finally:
         await channel.close()
 
+
 # TODO Доделать
 # async def get_connection() -> AbstractRobustConnection:
 #     return await aio_pika.connect_robust("amqp://guest:guest@localhost/")

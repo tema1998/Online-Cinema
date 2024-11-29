@@ -11,11 +11,7 @@ Base = declarative_base()
 engine = create_async_engine(settings.postgres_url, echo=True)
 
 # Create a sessionmaker
-async_session = sessionmaker(
-    bind=engine,
-    class_=AsyncSession,
-    expire_on_commit=False
-)
+async_session = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
 
 
 # Dependency for getting an async session

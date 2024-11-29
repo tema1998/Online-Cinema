@@ -1,7 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from notification_consumer_recorder_service.config.postgresql import get_db_session
-from notification_consumer_recorder_service.models.notification_models import Notifications
+from notification_consumer_recorder_service.models.notification_models import (
+    Notifications,
+)
 from notification_consumer_recorder_service.services.postgresql_base import BaseService
 
 

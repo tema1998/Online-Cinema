@@ -36,27 +36,27 @@ async def lifespan(app: FastAPI):
 
 
 def configure_tracer() -> None:
-    trace.set_tracer_provider(TracerProvider(
-        resource=Resource.create({SERVICE_NAME: "auth-service"}
-    )))
+    trace.set_tracer_provider(
+        TracerProvider(resource=Resource.create({SERVICE_NAME: "auth-service"}))
+    )
     trace.get_tracer_provider().add_span_processor(
         BatchSpanProcessor(
             JaegerExporter(
-                agent_host_name=config.jaeger_host,
-                agent_port=config.jaeger_port
+                agent_host_name=config.jaeger_host, agent_port=config.jaeger_port
             )
         )
     )
+
 
 if config.enable_tracer:
     configure_tracer()
 
 app = FastAPI(
     title=config.project_name,
-    docs_url='/api/openapi',
-    openapi_url='/api/openapi.json',
+    docs_url="/api/openapi",
+    openapi_url="/api/openapi.json",
     default_response_class=ORJSONResponse,
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 FastAPIInstrumentor.instrument_app(app)
@@ -66,7 +66,7 @@ origins = [
     "http://localhost:80",
     "http://127.0.0.1:80",
     "http://localhost:8000",
-    "http://127.0.0.1:8000"
+    "http://127.0.0.1:8000",
 ]
 
 # Add CORS middleware for handling cross-origin requests
@@ -81,7 +81,7 @@ app.add_middleware(
 # Add SessionMiddleware for handling OAuth session state
 app.add_middleware(
     SessionMiddleware,
-    secret_key=config.secret_key  # Ensure this is a strong, random secret key
+    secret_key=config.secret_key,  # Ensure this is a strong, random secret key
 )
 
 tracer = trace.get_tracer(__name__)
@@ -110,8 +110,8 @@ tracer = trace.get_tracer(__name__)
 #
 #     return response
 
-app.include_router(auth_router, prefix='/api/v1/auth', tags=['auth'])
-app.include_router(roles_router, prefix='/api/v1/roles', tags=['roles'])
+app.include_router(auth_router, prefix="/api/v1/auth", tags=["auth"])
+app.include_router(roles_router, prefix="/api/v1/roles", tags=["roles"])
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080)

@@ -56,7 +56,9 @@ def generate_fake_login_history(user_id):
 
 
 @pytest_asyncio.fixture(scope="session", autouse=True)
-async def data_upload(db_session: AsyncSession, num_users: int = 10, num_roles: int = 5):
+async def data_upload(
+    db_session: AsyncSession, num_users: int = 10, num_roles: int = 5
+):
     roles = [generate_fake_role() for _ in range(num_roles)]
     users = [generate_fake_user() for _ in range(num_users)]
 
@@ -70,9 +72,7 @@ async def data_upload(db_session: AsyncSession, num_users: int = 10, num_roles: 
     ]
     db_session.add_all(user_roles)
 
-    login_histories = [
-        generate_fake_login_history(user.id) for user in users
-    ]
+    login_histories = [generate_fake_login_history(user.id) for user in users]
     db_session.add_all(login_histories)
 
     await db_session.commit()
@@ -89,9 +89,11 @@ def create_user(db_session: AsyncSession, make_post_request):
         )
 
         if is_superuser:
-            await db_session.execute(update(User)
-                                     .where(User.login == "superuser")
-                                     .values(**{"is_superuser": True}))
+            await db_session.execute(
+                update(User)
+                .where(User.login == "superuser")
+                .values(**{"is_superuser": True})
+            )
             await db_session.commit()
 
     return inner
@@ -99,8 +101,8 @@ def create_user(db_session: AsyncSession, make_post_request):
 
 @pytest_asyncio.fixture(scope="session")
 async def access_token_of_superuser(create_user, make_post_request):
-    login = 'superuser'
-    password = '123456'
+    login = "superuser"
+    password = "123456"
 
     await create_user(login=login, password=password, is_superuser=True)
 
@@ -108,13 +110,13 @@ async def access_token_of_superuser(create_user, make_post_request):
         "/api/v1/auth/login",
         form_data={"login": login, "password": "123456"},
     )
-    return response_login.body['access_token']
+    return response_login.body["access_token"]
 
 
 @pytest_asyncio.fixture(scope="session")
 async def access_token_of_user(create_user, make_post_request):
-    login = 'user'
-    password = '123456'
+    login = "user"
+    password = "123456"
 
     await create_user(login=login, password=password, is_superuser=False)
 
@@ -122,4 +124,4 @@ async def access_token_of_user(create_user, make_post_request):
         "/api/v1/auth/login",
         form_data={"login": login, "password": password},
     )
-    return response_login.body['access_token']
+    return response_login.body["access_token"]

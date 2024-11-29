@@ -13,21 +13,25 @@ class ElasticAsyncSearchEngine(AsyncSearchEngine):
     async def get_by_id(self, index: str, _id: str) -> Any | None:
         try:
             doc = await self.elastic.get(index=index, id=_id)
-            return doc['_source']
+            return doc["_source"]
         except NotFoundError:
             return None
 
-    async def search_by_query(self, index: str, query_body: dict) -> Optional[List[Any]]:
+    async def search_by_query(
+        self, index: str, query_body: dict
+    ) -> Optional[List[Any]]:
         try:
             response = await self.elastic.search(index=index, body=query_body)
-            hits = response['hits']['hits']
+            hits = response["hits"]["hits"]
             if not hits:
                 return []
-            return [hit['_source'] for hit in hits]
+            return [hit["_source"] for hit in hits]
         except NotFoundError:
             return None
 
 
 # Dependency function to create the ElasticAsyncSearchEngine
-def get_search_engine(elastic_client: AsyncElasticsearch = Depends(get_elastic_client)) -> ElasticAsyncSearchEngine:
+def get_search_engine(
+    elastic_client: AsyncElasticsearch = Depends(get_elastic_client),
+) -> ElasticAsyncSearchEngine:
     return ElasticAsyncSearchEngine(elastic_client)

@@ -22,7 +22,7 @@ def event_loop():
     loop.close()
 
 
-@pytest_asyncio.fixture(name='es_client', scope='session')
+@pytest_asyncio.fixture(name="es_client", scope="session")
 async def es_client():
     """
     Fixture for getting ES client.
@@ -63,8 +63,7 @@ async def redis_client():
     And clear redis storage when close connection.
     """
     client = redis.Redis(
-        test_settings.redis_host, test_settings.redis_port,
-        decode_responses=True
+        test_settings.redis_host, test_settings.redis_port, decode_responses=True
     )
 
     client.flushdb(asynchronous=True)

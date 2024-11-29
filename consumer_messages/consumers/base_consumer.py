@@ -21,8 +21,10 @@ class BaseConsumer:
             try:
                 message_data = json.loads(message.body.decode())
                 logging.info(f"Received message: {message_data}")
-                if message.headers['x-death'][0]['count'] > settings.max_retries_dlq:
-                    logging.info('after %s retries message canceled', settings.max_retries)
+                if message.headers["x-death"][0]["count"] > settings.max_retries_dlq:
+                    logging.info(
+                        "after %s retries message canceled", settings.max_retries
+                    )
                 else:
                     await self.handle_message(message)
             except Exception as e:

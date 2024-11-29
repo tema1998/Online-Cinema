@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     limit_of_requests_per_minute: int = os.getenv("LIMIT_OF_REQUESTS_PER_MINUTE", 20)
 
     def es_url(self):
-        return f'{self.elastic_schema}{self.elastic_host}:{self.elastic_port}'
+        return f"{self.elastic_schema}{self.elastic_host}:{self.elastic_port}"
 
 
 # Применяем настройки логирования

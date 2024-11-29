@@ -13,7 +13,11 @@ class BaseService(abc.ABC):
         obj = await self.search_engine.get_by_id(self.index, obj_id)
         return obj
 
-    async def search(self, query_body: dict, index: Optional[str] = None) -> Optional[List[Any]]:
+    async def search(
+        self, query_body: dict, index: Optional[str] = None
+    ) -> Optional[List[Any]]:
         index_to_use = index or self.index
-        results = await self.search_engine.search_by_query(index_to_use, query_body=query_body)
+        results = await self.search_engine.search_by_query(
+            index_to_use, query_body=query_body
+        )
         return results

@@ -32,35 +32,33 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title=config.project_name,
-    docs_url='/api/openapi',
-    openapi_url='/api/openapi.json',
+    docs_url="/api/openapi",
+    openapi_url="/api/openapi.json",
     default_response_class=ORJSONResponse,
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 
-@app.middleware('http')
+@app.middleware("http")
 async def before_request(request: Request, call_next):
-    user_ip = request.headers.get('X-Forwarded-For')
+    user_ip = request.headers.get("X-Forwarded-For")
 
     response = await call_next(request)
 
-    result_of_checking_limit_of_requests = await check_limit_of_requests(user_ip=user_ip)
+    result_of_checking_limit_of_requests = await check_limit_of_requests(
+        user_ip=user_ip
+    )
 
     if result_of_checking_limit_of_requests:
         return ORJSONResponse(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            content={'detail': 'Too many requests'}
+            content={"detail": "Too many requests"},
         )
 
     return response
 
 
-origins = [
-    "http://localhost",
-    "http://localhost:8000",
-    "http://127.0.0.1:8000"
-]
+origins = ["http://localhost", "http://localhost:8000", "http://127.0.0.1:8000"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -70,9 +68,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(films.router, prefix='/movies/api/v1/films', tags=['films'])
-app.include_router(genres.router, prefix='/movies/api/v1/genres', tags=['genres'])
-app.include_router(persons.router, prefix='/movies/api/v1/persons', tags=['persons'])
+app.include_router(films.router, prefix="/movies/api/v1/films", tags=["films"])
+app.include_router(genres.router, prefix="/movies/api/v1/genres", tags=["genres"])
+app.include_router(persons.router, prefix="/movies/api/v1/persons", tags=["persons"])
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080)

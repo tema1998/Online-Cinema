@@ -18,12 +18,12 @@ class FilmService(BaseService):
         super().__init__(search_engine, self.index)
 
     async def get_films_list_filtered_searched_sorted(
-            self,
-            query: Optional[str] = None,
-            genre_id: Optional[str] = None,
-            sort: Optional[str] = None,
-            page_number: int = 1,
-            page_size: int = 50
+        self,
+        query: Optional[str] = None,
+        genre_id: Optional[str] = None,
+        sort: Optional[str] = None,
+        page_number: int = 1,
+        page_size: int = 50,
     ) -> List[FilmListInput] | None:
         """Retrieve a list of films with optional sorting, genre filtering, and full-text search."""
 
@@ -32,18 +32,16 @@ class FilmService(BaseService):
         # Construct filter conditions
         filter_conditions = []
         if genre_id:
-            filter_conditions.append({
-                "nested": {
-                    "path": "genres",
-                    "query": {
-                        "bool": {
-                            "must": [
-                                {"term": {"genres.id": genre_id}}
-                            ]
-                        }
+            filter_conditions.append(
+                {
+                    "nested": {
+                        "path": "genres",
+                        "query": {
+                            "bool": {"must": [{"term": {"genres.id": genre_id}}]}
+                        },
                     }
                 }
-            })
+            )
 
         # Construct search conditions
         search_conditions = []
@@ -53,19 +51,18 @@ class FilmService(BaseService):
         # Build the query
         query_body = {
             "size": page_size,
-            "query": {
-                "bool": {
-                    "must": search_conditions,
-                    "filter": filter_conditions
-                }
-            },
+            "query": {"bool": {"must": search_conditions, "filter": filter_conditions}},
             "from": (page_number - 1) * page_size,
         }
 
         # Add sorting if provided
-        if sort is not None and sort != '-':
-            sort_field = sort[1:] if sort.startswith(('+', '-')) else "imdb_rating"
-            sort_order = sort_dict.get(sort[0], "desc") if sort.startswith(('+', '-')) else "desc"
+        if sort is not None and sort != "-":
+            sort_field = sort[1:] if sort.startswith(("+", "-")) else "imdb_rating"
+            sort_order = (
+                sort_dict.get(sort[0], "desc")
+                if sort.startswith(("+", "-"))
+                else "desc"
+            )
             query_body["sort"] = [{sort_field: {"order": sort_order}}]
 
         search_results = await self.search(query_body=query_body)
@@ -74,10 +71,7 @@ class FilmService(BaseService):
         return None
 
     async def get_similar_films(
-            self,
-            film_id: str,
-            page_number: int = 1,
-            page_size: int = 50
+        self, film_id: str, page_number: int = 1, page_size: int = 50
     ) -> List[FilmListInput] | None:
         """Retrieve similar films based on genre."""
 
@@ -101,19 +95,21 @@ class FilmService(BaseService):
                                 "query": {
                                     "bool": {
                                         "must": [
-                                            {"terms": {"genres.id": genres}}  # Match any of the genres
+                                            {
+                                                "terms": {"genres.id": genres}
+                                            }  # Match any of the genres
                                         ]
                                     }
-                                }
+                                },
                             }
                         }
                     ],
                     "must_not": [
                         {"term": {"id": film_id}}  # Exclude the original film
-                    ]
+                    ],
                 }
             },
-            "from": (page_number - 1) * page_size  # Pagination
+            "from": (page_number - 1) * page_size,  # Pagination
         }
 
         search_results = await self.search(query_body=query_body)
@@ -123,5 +119,7 @@ class FilmService(BaseService):
 
 
 # The main dependency function to create the FilmService
-def get_film_service(search_engine: ElasticAsyncSearchEngine = Depends(get_search_engine)) -> FilmService:
+def get_film_service(
+    search_engine: ElasticAsyncSearchEngine = Depends(get_search_engine),
+) -> FilmService:
     return FilmService(search_engine)

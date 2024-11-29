@@ -27,7 +27,7 @@ class RedisStorage(BaseStorage):
 
     def retrieve_state(self) -> Dict[str, Any]:
         """Retrieve state from storage"""
-        return self.redis_adapter.hgetall('data')
+        return self.redis_adapter.hgetall("data")
 
 
 class State:

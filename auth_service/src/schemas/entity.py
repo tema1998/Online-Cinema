@@ -23,6 +23,7 @@ class SocialUserRegister(BaseModel):
     class Config:
         from_attributes = True
 
+
 class UserInfoOut(BaseModel):
     id: Optional[UUID] = None
     email: Optional[EmailStr] = None
@@ -63,8 +64,10 @@ class LogoutRequest(RefreshTokenRequest):
 class GetUserInfoRequest(BaseModel):
     user_id: UUID
 
+
 class GetAccessToken(BaseModel):
     access_token: str
+
 
 class UserUpdateRequest(BaseModel):
     login: Optional[str] = None
@@ -73,9 +76,15 @@ class UserUpdateRequest(BaseModel):
 
 
 class UpdateUserCredentialsRequest(BaseModel):
-    login: Optional[constr(min_length=3, max_length=50)] = Field(None, description="New login")
-    old_password: Optional[constr(min_length=6)] = Field(None, description="Old password")
-    new_password: Optional[constr(min_length=6)] = Field(None, description="New password")
+    login: Optional[constr(min_length=3, max_length=50)] = Field(
+        None, description="New login"
+    )
+    old_password: Optional[constr(min_length=6)] = Field(
+        None, description="Old password"
+    )
+    new_password: Optional[constr(min_length=6)] = Field(
+        None, description="New password"
+    )
 
 
 class UserResponse(BaseModel):
@@ -149,4 +158,6 @@ class UserPermissions(BaseModel):
 
 
 class AssignDeleteUserRoleRequest(BaseModel):
-    role_name: Optional[constr(max_length=100)] = Field(None, description="Name of the role.")
+    role_name: Optional[constr(max_length=100)] = Field(
+        None, description="Name of the role."
+    )

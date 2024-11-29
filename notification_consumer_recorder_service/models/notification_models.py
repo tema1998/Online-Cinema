@@ -14,4 +14,3 @@ class Notifications(Base):
     recipient = Column(String, nullable=False)
     message_type = Column(String, nullable=False)
     message_transfer = Column(String, nullable=False)
-

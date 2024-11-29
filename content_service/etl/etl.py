@@ -6,14 +6,14 @@ from index_manager import IndexManager
 
 class ETL:
     def __init__(
-            self,
-            index_manager: IndexManager,
-            extractor: DataExtractor,
-            transformer: DataTransformer,
-            loader: DataLoader,
-            etl_state: dict,
-            batch_size: int,
-            index_name: str
+        self,
+        index_manager: IndexManager,
+        extractor: DataExtractor,
+        transformer: DataTransformer,
+        loader: DataLoader,
+        etl_state: dict,
+        batch_size: int,
+        index_name: str,
     ):
         self.index_manager = index_manager
         self.extractor = extractor

@@ -16,7 +16,9 @@ class DataExtractor:
         self.last_modified = "1970-01-01 00:00:00"  # Initial value for last modified
 
     def extract(self):
-        data, size_of_current_batch, self.last_modified = self.extract_data_from_db(self.last_modified)
+        data, size_of_current_batch, self.last_modified = self.extract_data_from_db(
+            self.last_modified
+        )
         return data
 
     @backoff(limit_of_retries=10)
@@ -26,8 +28,9 @@ class DataExtractor:
         :param last_modified: Last modified of data.
         :return: List of data, size of current batch, modified datetime of last entry.
         """
-        with psycopg.connect(**self.database_params, row_factory=dict_row,
-                             cursor_factory=ClientCursor) as conn, conn.cursor() as cursor:
+        with psycopg.connect(
+            **self.database_params, row_factory=dict_row, cursor_factory=ClientCursor
+        ) as conn, conn.cursor() as cursor:
 
             if self.table_name == "film_work":
                 cursor.execute(generate_filmwork_query(last_modified, self.batch_size))
@@ -43,7 +46,7 @@ class DataExtractor:
 
             # Get modified date of the last entry in the batch.
             if size_of_current_batch == 0:
-                logging.info('There is no new data to extract.')
+                logging.info("There is no new data to extract.")
                 return [], 0, last_modified
 
             last_modified = str(executed_data[-1]["modified"])

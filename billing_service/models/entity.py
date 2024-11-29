@@ -9,13 +9,22 @@ from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from db.db_utils import Base
 
+
 class TimeStampedMixin:
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    updated_at = Column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
+    )
 
 
 class UUIDMixin:
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
+    id = Column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+        unique=True,
+        nullable=False,
+    )
 
     def to_dict(self) -> dict:
         """Convert the instance to a dictionary."""
@@ -23,7 +32,7 @@ class UUIDMixin:
 
 
 class Subscription(Base, UUIDMixin, TimeStampedMixin):
-    __tablename__ = 'subscriptions'
+    __tablename__ = "subscriptions"
 
     name = Column(String(50), unique=True, nullable=False)
     description = Column(String(255))
@@ -34,8 +43,9 @@ class Subscription(Base, UUIDMixin, TimeStampedMixin):
     def __repr__(self) -> str:
         return f"<Subscription(id={self.id}, name='{self.name}', description='{self.description}')>"
 
+
 class Order(Base, UUIDMixin, TimeStampedMixin):
-    __tablename__ = 'orders'
+    __tablename__ = "orders"
 
     total_price = Column(DECIMAL, nullable=False)
     status = Column(String(255))
@@ -46,7 +56,6 @@ class Order(Base, UUIDMixin, TimeStampedMixin):
     payment_id = Column(String(255), nullable=True)
     subscription_id: Mapped[UUID] = mapped_column(ForeignKey("subscriptions.id"))
     subscription: Mapped["Subscription"] = relationship(back_populates="orders")
-
 
     def __repr__(self) -> str:
         return f"<Order(id={self.id}')>"

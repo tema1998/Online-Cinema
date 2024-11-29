@@ -25,5 +25,5 @@ def wait_for_es():
     raise TransportError
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     wait_for_es()

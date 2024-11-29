@@ -8,5 +8,7 @@ class AsyncSearchEngine(ABC):
         pass
 
     @abstractmethod
-    async def search_by_query(self, index: str, query_body: dict) -> Optional[List[Any]]:
+    async def search_by_query(
+        self, index: str, query_body: dict
+    ) -> Optional[List[Any]]:
         pass

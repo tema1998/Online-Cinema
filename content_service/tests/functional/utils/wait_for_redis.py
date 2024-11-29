@@ -20,5 +20,5 @@ def wait_for_redis():
     raise RedisError
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     wait_for_redis()

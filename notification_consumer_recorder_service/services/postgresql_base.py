@@ -42,9 +42,7 @@ class BaseService(Generic[T]):
         """Update a record by ID with provided data."""
         try:
             await self.db_session.execute(
-                update(self.model)
-                .where(self.model.id == id)
-                .values(**update_data)
+                update(self.model).where(self.model.id == id).values(**update_data)
             )
             await self.db_session.commit()
             return await self.get(id)

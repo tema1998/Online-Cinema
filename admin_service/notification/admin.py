@@ -14,6 +14,5 @@ class NotificationAdmin(admin.ModelAdmin):
 
     @admin.action(description="Отправить уведомление пользователям")
     def send_notification(self, request, queryset):
-        print('send notification')
-        # for notification in queryset:
-        #     status_code = notification.send()
+        for notification in queryset:
+            status_code = notification.send()

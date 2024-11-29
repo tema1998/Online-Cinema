@@ -20,14 +20,14 @@ router = APIRouter()
 )
 @cache(expire=60)
 async def genres(
-        genre_service: GenreService = Depends(get_genre_service),
-        pagination: PaginationParams = Depends(PaginationParams),
+    genre_service: GenreService = Depends(get_genre_service),
+    pagination: PaginationParams = Depends(PaginationParams),
 ) -> list[Genre]:
-    genres_list = await genre_service.genre_list(
-        pagination.page, pagination.page_size
-    )
+    genres_list = await genre_service.genre_list(pagination.page, pagination.page_size)
     if not genres_list:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="There is no genres.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="There is no genres."
+        )
 
     return genres_list
 
@@ -40,14 +40,14 @@ async def genres(
 )
 @cache(expire=60)
 async def genres(
-        genre_id: str,
-        genre_service: GenreService = Depends(get_genre_service),
+    genre_id: str,
+    genre_service: GenreService = Depends(get_genre_service),
 ) -> Genre:
-    genre = await genre_service.get_by_id(
-        genre_id
-    )
+    genre = await genre_service.get_by_id(genre_id)
     if not genre:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="There is no such genre.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="There is no such genre."
+        )
 
     return genre
 
@@ -55,21 +55,27 @@ async def genres(
 @router.get(
     "/{genre_id}/popular",
     response_model=List[FilmListOutput],
-    summary="Get popular films by genre"
+    summary="Get popular films by genre",
 )
 @cache(expire=60)
 async def genres(
-        genre_id: str = Path(..., description="The ID of the genre for which to find films"),
-        pagination: PaginationParams = Depends(PaginationParams),
-        genre_service: GenreService = Depends(get_genre_service),
+    genre_id: str = Path(
+        ..., description="The ID of the genre for which to find films"
+    ),
+    pagination: PaginationParams = Depends(PaginationParams),
+    genre_service: GenreService = Depends(get_genre_service),
 ) -> List[FilmListOutput]:
     films = await genre_service.get_popular_films(
-        genre_id=genre_id,
-        page_number=pagination.page,
-        page_size=pagination.page_size
+        genre_id=genre_id, page_number=pagination.page, page_size=pagination.page_size
     )
 
     if not films:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="There is no films of such genre.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="There is no films of such genre.",
+        )
 
-    return [FilmListOutput(uuid=film.uuid, title=film.title, imdb_rating=film.imdb_rating) for film in films]
+    return [
+        FilmListOutput(uuid=film.uuid, title=film.title, imdb_rating=film.imdb_rating)
+        for film in films
+    ]

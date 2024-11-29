@@ -5,13 +5,17 @@ import aio_pika
 
 from notification_consumer_recorder_service.config.settings import settings
 from notification_consumer_recorder_service.consumers.base_consumer import BaseConsumer
-from notification_consumer_recorder_service.services.notification_recorder_service import get_notification_service
+from notification_consumer_recorder_service.services.notification_recorder_service import (
+    get_notification_service,
+)
 
 
 class NotificationConsumer(BaseConsumer):
     def __init__(self):
-        super().__init__(queue_name=settings.instant_notification_queue,
-                         queue_name_dlq=settings.instant_notification_dlq)
+        super().__init__(
+            queue_name=settings.instant_notification_queue,
+            queue_name_dlq=settings.instant_notification_dlq,
+        )
 
     async def handle_message(self, message: aio_pika.IncomingMessage):
 
@@ -31,10 +35,9 @@ class NotificationConsumer(BaseConsumer):
                     content_id=content_id,
                     recipient=recipient,
                     message_type=message_type,
-                    message_transfer=message_transfer
+                    message_transfer=message_transfer,
                 )
 
             except Exception as e:
                 await message.reject(requeue=False)
                 logging.error(f"Error handling message: {str(e)}")
-

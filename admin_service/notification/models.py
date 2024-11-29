@@ -9,11 +9,14 @@ from django.db import models
 class TimeStampedMixin(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
     class Meta:
         abstract = True
 
+
 class UUIDMixin(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
 
 class PersonalNotification(TimeStampedMixin, UUIDMixin):
     topic = models.CharField(max_length=255)
@@ -21,8 +24,8 @@ class PersonalNotification(TimeStampedMixin, UUIDMixin):
     users = models.ManyToManyField(User)
 
     class Meta:
-        verbose_name = 'Personal Notification'
-        verbose_name_plural = 'Personal Notifications'
+        verbose_name = "Personal Notification"
+        verbose_name_plural = "Personal Notifications"
 
     def send(self) -> Annotated[int, "Status code"]:
         emails = [user.email for user in list(self.users.all())]

@@ -11,11 +11,19 @@ from src.db.db_utils import Base
 
 class TimeStampedMixin:
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    updated_at = Column(
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
+    )
 
 
 class UUIDMixin:
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
+    id = Column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+        unique=True,
+        nullable=False,
+    )
 
     def to_dict(self) -> dict:
         """Convert the instance to a dictionary."""
@@ -23,20 +31,20 @@ class UUIDMixin:
 
 
 class Role(Base, UUIDMixin, TimeStampedMixin):
-    __tablename__ = 'roles'
+    __tablename__ = "roles"
 
     name = Column(String(50), unique=True, nullable=False)
     description = Column(String(255))
     permissions = Column(ARRAY(String), nullable=False)
 
-    users = relationship('UserRole', back_populates='role')
+    users = relationship("UserRole", back_populates="role")
 
     def __repr__(self) -> str:
         return f"<Role(id={self.id}, name='{self.name}', description='{self.description}')>"
 
 
 class User(Base, UUIDMixin, TimeStampedMixin):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     login = Column(String(255), unique=True, nullable=False)
     email = Column(String(255), nullable=False)
@@ -47,41 +55,55 @@ class User(Base, UUIDMixin, TimeStampedMixin):
     is_superuser = Column(Boolean, default=False)
     is_premium = Column(Boolean, default=False)
 
-    roles = relationship('UserRole', back_populates='user')
-    login_history = relationship('UserLoginHistory', back_populates='user')
-    social_accounts = relationship('UserSocialAccount', back_populates='user', passive_deletes=True)
+    roles = relationship("UserRole", back_populates="user")
+    login_history = relationship("UserLoginHistory", back_populates="user")
+    social_accounts = relationship(
+        "UserSocialAccount", back_populates="user", passive_deletes=True
+    )
 
     def __repr__(self) -> str:
-        return (f"<User(id={self.id}, login='{self.login}', "
-                f"first_name='{self.first_name}', last_name='{self.last_name}', "
-                f"is_active={self.is_active}, is_superuser={self.is_superuser})>")
+        return (
+            f"<User(id={self.id}, login='{self.login}', "
+            f"first_name='{self.first_name}', last_name='{self.last_name}', "
+            f"is_active={self.is_active}, is_superuser={self.is_superuser})>"
+        )
 
 
 class UserSocialAccount(Base, UUIDMixin, TimeStampedMixin):
-    __tablename__ = 'user_social_accounts'
+    __tablename__ = "user_social_accounts"
 
-    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    provider = Column(String(50), nullable=False)  # e.g., 'google', 'vk', 'yandex', 'mail'
+    user_id = Column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    provider = Column(
+        String(50), nullable=False
+    )  # e.g., 'google', 'vk', 'yandex', 'mail'
     provider_user_id = Column(String(255), nullable=False, unique=True)
     username = Column(String(255), nullable=True)
     fullname = Column(String(255), nullable=True)
 
-    user = relationship('User', back_populates='social_accounts')
+    user = relationship("User", back_populates="social_accounts")
 
     def __repr__(self) -> str:
-        return (f"<UserSocialAccount(id={self.id}, user_id={self.user_id}, "
-                f"provider='{self.provider}', provider_user_id='{self.provider_user_id}', "
-                f"email='{self.email}', username='{self.username}')>")
+        return (
+            f"<UserSocialAccount(id={self.id}, user_id={self.user_id}, "
+            f"provider='{self.provider}', provider_user_id='{self.provider_user_id}', "
+            f"email='{self.email}', username='{self.username}')>"
+        )
 
 
 class UserRole(Base, UUIDMixin, TimeStampedMixin):
-    __tablename__ = 'user_roles'
+    __tablename__ = "user_roles"
 
-    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    role_id = Column(UUID(as_uuid=True), ForeignKey('roles.id', ondelete='CASCADE'), nullable=False)
+    user_id = Column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    role_id = Column(
+        UUID(as_uuid=True), ForeignKey("roles.id", ondelete="CASCADE"), nullable=False
+    )
 
-    user = relationship('User', back_populates='roles', passive_deletes=True)
-    role = relationship('Role', back_populates='users', passive_deletes=True)
+    user = relationship("User", back_populates="roles", passive_deletes=True)
+    role = relationship("Role", back_populates="users", passive_deletes=True)
 
     def __repr__(self) -> str:
         return f"<UserRofle(user_id={self.user_id}, role_id={self.role_id})>"
@@ -122,25 +144,27 @@ def create_partition(target, connection, **kw) -> None:
 
 
 class UserLoginHistory(Base):
-    __tablename__ = 'user_login_history'
-    __table_args__ = (
-        {
-            'postgresql_partition_by': 'LIST (user_device_type)',
-            'listeners': [('after_create', create_partition)],
-        }
-    )
+    __tablename__ = "user_login_history"
+    __table_args__ = {
+        "postgresql_partition_by": "LIST (user_device_type)",
+        "listeners": [("after_create", create_partition)],
+    }
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
-    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
+    id = Column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False
+    )
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     login_time = Column(DateTime, default=datetime.utcnow, nullable=False)
     user_agent = Column(String(255))
     ip_address = Column(String(45))
     user_device_type = Column(Text, nullable=True)  # Partition key, not primary key
 
     # Relationship with the User model
-    user = relationship('User', back_populates='login_history')
+    user = relationship("User", back_populates="login_history")
 
     def __repr__(self) -> str:
-        return (f"<UserLoginHistory(id={self.id}, user_id={self.user_id}, "
-                f"login_time='{self.login_time}', user_agent='{self.user_agent}', "
-                f"ip_address='{self.ip_address}', user_device_type='{self.user_device_type}')>")
+        return (
+            f"<UserLoginHistory(id={self.id}, user_id={self.user_id}, "
+            f"login_time='{self.login_time}', user_agent='{self.user_agent}', "
+            f"ip_address='{self.ip_address}', user_device_type='{self.user_device_type}')>"
+        )

@@ -12,8 +12,11 @@ class DeliveryMode(Enum):
 
 
 class BrokerServiceAbstract(ABC):
-    def __init__(self, channel=Depends(get_rabbitmq_channel),
-                 delivery_mode=DeliveryMode.PERSISTENT):
+    def __init__(
+        self,
+        channel=Depends(get_rabbitmq_channel),
+        delivery_mode=DeliveryMode.PERSISTENT,
+    ):
         self.channel = channel
         self.delivery_mode = delivery_mode
 
@@ -26,10 +29,9 @@ class RabbitMQService(BrokerServiceAbstract):
     async def publish(self, message, queue_name):
         await self.channel.default_exchange.publish(
             aio_pika.Message(
-                body=message.encode(),
-                delivery_mode=self.delivery_mode.value
+                body=message.encode(), delivery_mode=self.delivery_mode.value
             ),
-            routing_key=queue_name
+            routing_key=queue_name,
         )
 
         return {"status": "Message sent to broker", "data": message}

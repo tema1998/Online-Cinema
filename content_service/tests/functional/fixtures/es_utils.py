@@ -4,7 +4,7 @@ import pytest_asyncio
 from elasticsearch.helpers import async_bulk
 
 
-@pytest_asyncio.fixture(name='es_remove_if_exists_and_create_index', scope="session")
+@pytest_asyncio.fixture(name="es_remove_if_exists_and_create_index", scope="session")
 def es_remove_if_exists_and_create_index(es_client):
     async def inner(index_name: str, index_settings: dict):
         """
@@ -20,7 +20,7 @@ def es_remove_if_exists_and_create_index(es_client):
     return inner
 
 
-@pytest_asyncio.fixture(name='es_remove_index', scope="session")
+@pytest_asyncio.fixture(name="es_remove_index", scope="session")
 def es_remove_index(es_client):
     async def inner(index_name: str):
         """
@@ -41,9 +41,11 @@ def es_write_data(es_client):
         :param data: Prepared data for writing to index.
         :param refresh: Refresh policy for making the data immediately searchable.
         """
-        updated, errors = await async_bulk(client=es_client, actions=data, refresh=refresh)
+        updated, errors = await async_bulk(
+            client=es_client, actions=data, refresh=refresh
+        )
 
         if errors:
-            raise Exception(f'Error of data adding to {index_name} index of ES.')
+            raise Exception(f"Error of data adding to {index_name} index of ES.")
 
     return inner

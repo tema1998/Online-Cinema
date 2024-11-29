@@ -18,9 +18,7 @@ engine = create_async_engine(settings.db_url, echo=True, future=True)
 
 # Create a configured "Session" class
 AsyncSessionLocal = sessionmaker(
-    bind=engine,
-    class_=AsyncSession,
-    expire_on_commit=False
+    bind=engine, class_=AsyncSession, expire_on_commit=False
 )
 
 
@@ -38,5 +36,5 @@ async def wait_for_postgres():
         raise
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(wait_for_postgres())

@@ -21,7 +21,7 @@ def check_limit_of_user_requests(user_ip: str) -> Optional[bool]:
     now = datetime.datetime.now()
 
     # Create key user_ip:current_minute
-    key = f'{user_ip}:{now.minute}'
+    key = f"{user_ip}:{now.minute}"
 
     # Add pipline.
     pipe.incr(key, 1)

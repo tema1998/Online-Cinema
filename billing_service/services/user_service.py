@@ -16,18 +16,26 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from src.core.config import config
 from src.db.pagination import PaginationParams
 from src.models.entity import User, UserLoginHistory, Role, UserSocialAccount
-from src.schemas.entity import (UserRegister, TokenResponse, RefreshTokenRequest, UpdateUserCredentialsRequest,
-                                UserLoginHistoryResponse, SocialUserRegister)
+from src.schemas.entity import (
+    UserRegister,
+    TokenResponse,
+    RefreshTokenRequest,
+    UpdateUserCredentialsRequest,
+    UserLoginHistoryResponse,
+    SocialUserRegister,
+)
 from src.services.async_pg_repository import PostgresAsyncRepository
 from src.services.async_redis_repository import AsyncRedisRepository
 
 
 class UserService:
-    def __init__(self,
-                 db: PostgresAsyncRepository,
-                 redis: AsyncRedisRepository,
-                 secret_key: str,
-                 algorithm: str = "HS256"):
+    def __init__(
+        self,
+        db: PostgresAsyncRepository,
+        redis: AsyncRedisRepository,
+        secret_key: str,
+        algorithm: str = "HS256",
+    ):
         self.db = db
         self.redis = redis
         self.secret_key = secret_key
@@ -71,17 +79,19 @@ class UserService:
 
     async def register_user(self, user_data: dict) -> User:
         """
-                Register a new user by validating and creating the user in the database.
-                :param user_data: Dictionary containing user registration data.
-                :return: The created User ORM object.
-                """
+        Register a new user by validating and creating the user in the database.
+        :param user_data: Dictionary containing user registration data.
+        :return: The created User ORM object.
+        """
         # Check if the user already exists by login
-        existing_user = await self.db.fetch_by_query_all(User, 'login', user_data['login'])
+        existing_user = await self.db.fetch_by_query_all(
+            User, "login", user_data["login"]
+        )
 
         if existing_user:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User with this login already exists."
+                detail="User with this login already exists.",
             )
 
         # Use the create_user method to handle the actual creation logic
@@ -97,9 +107,9 @@ class UserService:
         """
         try:
             # Validate the input data using the UserRegister Pydantic model
-            if 'password' in user_data:
-                hashed_password = generate_password_hash(user_data['password'])
-                user_data['password'] = hashed_password
+            if "password" in user_data:
+                hashed_password = generate_password_hash(user_data["password"])
+                user_data["password"] = hashed_password
 
             # Create a Pydantic model instance to validate the input data
             user = UserRegister(**user_data)
@@ -116,7 +126,9 @@ class UserService:
         await self.db.insert(user_orm)
         return user_orm
 
-    async def create_social_user(self, user_data: dict, provider: str, provider_user_id: str) -> User:
+    async def create_social_user(
+        self, user_data: dict, provider: str, provider_user_id: str
+    ) -> User:
         """
         Creates a new user in the database using a social account and links the social account.
         :param user_data: Dictionary containing user data from social providers.
@@ -126,7 +138,7 @@ class UserService:
         """
         try:
             # Use email as login or generate a dummy login if email is not available
-            user_data['login'] = user_data.get('email', f'{provider}_{uuid4()}')
+            user_data["login"] = user_data.get("email", f"{provider}_{uuid4()}")
 
             # Create a Pydantic model instance to validate the input data
             user = SocialUserRegister(**user_data)  # Validate the user data
@@ -139,10 +151,10 @@ class UserService:
 
         # Remove any fields that are not part of the User model, such as 'name'
         user_data_dict = user.dict(exclude_unset=True)
-        user_data_dict.pop('name', None)  # Remove 'name' field if it exists
+        user_data_dict.pop("name", None)  # Remove 'name' field if it exists
 
         # Convert the Pydantic model to the ORM model, explicitly passing 'login'
-        user_orm = User(**user_data_dict, login=user_data.get('login'))
+        user_orm = User(**user_data_dict, login=user_data.get("login"))
 
         # Insert the new user into the database
         await self.db.insert(user_orm)
@@ -160,16 +172,22 @@ class UserService:
 
         return user_orm
 
-    def create_access_token(self, data: dict, expires_delta: Optional[timedelta] = None):
+    def create_access_token(
+        self, data: dict, expires_delta: Optional[timedelta] = None
+    ):
         to_encode = data.copy()
         if expires_delta:
             expire = datetime.utcnow() + expires_delta
         else:
-            expire = datetime.utcnow() + timedelta(minutes=self.access_token_exp_minutes)
+            expire = datetime.utcnow() + timedelta(
+                minutes=self.access_token_exp_minutes
+            )
         to_encode.update({"exp": expire})
 
         # Convert UUIDs to strings
-        to_encode = {k: (str(v) if isinstance(v, UUID) else v) for k, v in to_encode.items()}
+        to_encode = {
+            k: (str(v) if isinstance(v, UUID) else v) for k, v in to_encode.items()
+        }
 
         return jwt.encode(to_encode, self.secret_key, algorithm=self.algorithm)
 
@@ -179,8 +197,12 @@ class UserService:
         to_encode.update({"exp": expire})
         return jwt.encode(to_encode, self.secret_key, algorithm=self.algorithm)
 
-    async def record_login(self, user_id: str, user_agent: Optional[str] = None,
-                           ip_address: Optional[str] = None) -> UserLoginHistory:
+    async def record_login(
+        self,
+        user_id: str,
+        user_agent: Optional[str] = None,
+        ip_address: Optional[str] = None,
+    ) -> UserLoginHistory:
         """
         Record the login event for the given user, including user agent and IP address.
         """
@@ -189,7 +211,7 @@ class UserService:
             user_id=user_id,
             user_agent=user_agent,
             ip_address=ip_address,
-            login_time=datetime.utcnow()
+            login_time=datetime.utcnow(),
         )
 
         # Save the login history record to the database
@@ -199,29 +221,36 @@ class UserService:
 
     async def login(self, login_data: dict, request: Request) -> TokenResponse:
         # Fetch the user from the database by login
-        user: User = await self.db.fetch_by_query_first(User, 'login', login_data['login'])
+        user: User = await self.db.fetch_by_query_first(
+            User, "login", login_data["login"]
+        )
 
         # If the user doesn't exist or the password is incorrect, raise an error
-        if not user or not check_password_hash(user.password, login_data['password']):
+        if not user or not check_password_hash(user.password, login_data["password"]):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Incorrect username or password."
+                detail="Incorrect username or password.",
             )
 
         # Generate access and refresh tokens
-        access_token = self.create_access_token(data={
-            "sub": user.id,
-            "login": user.login,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "is_superuser": user.is_superuser,
-            "is_active": user.is_active,
-        })
+        access_token = self.create_access_token(
+            data={
+                "sub": user.id,
+                "login": user.login,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "is_superuser": user.is_superuser,
+                "is_active": user.is_active,
+            }
+        )
         refresh_token = self.create_refresh_token(user.id)
 
         # Save refresh token in Redis
-        await self.redis.set(f"refresh_token:{user.id}", refresh_token,
-                             expire=self.refresh_token_exp_days * 24 * 60 * 60)
+        await self.redis.set(
+            f"refresh_token:{user.id}",
+            refresh_token,
+            expire=self.refresh_token_exp_days * 24 * 60 * 60,
+        )
 
         # Extract user agent and IP address from the request
         user_agent = request.headers.get("User-Agent", "Unknown")
@@ -232,9 +261,7 @@ class UserService:
 
         # Return the token response
         return TokenResponse(
-            access_token=access_token,
-            token_type="bearer",
-            refresh_token=refresh_token
+            access_token=access_token, token_type="bearer", refresh_token=refresh_token
         )
 
     async def refresh_access_token(self, refresh_request: dict) -> TokenResponse:
@@ -244,7 +271,9 @@ class UserService:
             refresh_token = refresh_token_model.refresh_token
 
             # Decode the refresh token
-            payload = jwt.decode(refresh_token, self.secret_key, algorithms=[self.algorithm])
+            payload = jwt.decode(
+                refresh_token, self.secret_key, algorithms=[self.algorithm]
+            )
             user_id = payload.get("sub")
 
             if user_id is None:
@@ -269,14 +298,15 @@ class UserService:
             # Regenerate a new refresh token
             new_refresh_token = self.create_refresh_token(user_id)
             await self.redis.set(
-                f"refresh_token:{user_id}", new_refresh_token,
-                expire=self.refresh_token_exp_days * 60 * 60 * 24
+                f"refresh_token:{user_id}",
+                new_refresh_token,
+                expire=self.refresh_token_exp_days * 60 * 60 * 24,
             )
 
             return TokenResponse(
                 access_token=access_token,
                 token_type="bearer",
-                refresh_token=new_refresh_token
+                refresh_token=new_refresh_token,
             )
 
         except (JWTError, ValidationError):
@@ -290,18 +320,25 @@ class UserService:
         try:
             # Remove the refresh token from Redis
             stored_refresh_token = await self.redis.get(f"refresh_token:{user_id}")
-            if stored_refresh_token is not None and stored_refresh_token == refresh_token:
+            if (
+                stored_refresh_token is not None
+                and stored_refresh_token == refresh_token
+            ):
                 await self.redis.delete(f"refresh_token:{user_id}")
 
             # Add the access token to the blacklist
-            access_token_ttl = self._get_token_ttl(access_token)  # Calculate the TTL from the token
+            access_token_ttl = self._get_token_ttl(
+                access_token
+            )  # Calculate the TTL from the token
             if access_token_ttl > 0:
-                await self.redis.set(f"blacklist:{access_token}", "blacklisted", expire=access_token_ttl)
+                await self.redis.set(
+                    f"blacklist:{access_token}", "blacklisted", expire=access_token_ttl
+                )
 
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="An error occurred during logout."
+                detail="An error occurred during logout.",
             )
 
     def _get_token_ttl(self, token: str) -> int:
@@ -325,16 +362,17 @@ class UserService:
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
-    async def update_user_credentials(self, user_id: str, update_request: UpdateUserCredentialsRequest) -> User:
+    async def update_user_credentials(
+        self, user_id: str, update_request: UpdateUserCredentialsRequest
+    ) -> User:
         """
         Update the user's credentials, handling both login and password changes.
         """
         # Fetch the user by ID
-        user = await self.db.fetch_by_query_first(User, 'id', user_id)
+        user = await self.db.fetch_by_query_first(User, "id", user_id)
         if not user:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found."
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
             )
 
         # Extract update data
@@ -353,7 +391,7 @@ class UserService:
             if not check_password_hash(user.password, update_data["old_password"]):
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Old password is incorrect."
+                    detail="Old password is incorrect.",
                 )
             user.password = generate_password_hash(update_data["new_password"])
 
@@ -364,7 +402,7 @@ class UserService:
         except IntegrityError:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="The login is already taken."
+                detail="The login is already taken.",
             )
 
         return user
@@ -374,19 +412,22 @@ class UserService:
         Retrieve the login history for the specified user.
         """
         # Fetch the login history for the user from the database
-        login_history = await self.db.fetch_by_query_all(UserLoginHistory, 'user_id', user_id)
+        login_history = await self.db.fetch_by_query_all(
+            UserLoginHistory, "user_id", user_id
+        )
 
         if not login_history:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="No login history found for this user."
+                detail="No login history found for this user.",
             )
 
         # Convert the ORM instances to Pydantic models
         return [UserLoginHistoryResponse.from_orm(entry) for entry in login_history]
 
-    async def get_login_history_paginated(self, user_id: str, pagination: PaginationParams) -> tuple[
-        list[UserLoginHistory], int]:
+    async def get_login_history_paginated(
+        self, user_id: str, pagination: PaginationParams
+    ) -> tuple[list[UserLoginHistory], int]:
         """
         Retrieve the login history for the specified user with pagination.
         """
@@ -403,9 +444,8 @@ class UserService:
             login_history = result.scalars().all()
 
             # Calculate total count
-            total_count_stmt = (
-                select(func.count(UserLoginHistory.id))
-                .where(UserLoginHistory.user_id == user_id)
+            total_count_stmt = select(func.count(UserLoginHistory.id)).where(
+                UserLoginHistory.user_id == user_id
             )
             total_count_result = await session.execute(total_count_stmt)
             total_count = total_count_result.scalar()
@@ -454,7 +494,7 @@ class UserService:
         :return: The User ORM object.
         """
         # Extract provider-specific user ID (e.g., 'sub' for Google)
-        provider_user_id = user_info.get('sub')
+        provider_user_id = user_info.get("sub")
         if not provider_user_id:
             raise ValueError(f"User info from {provider} is missing the 'sub' field.")
 
@@ -465,16 +505,20 @@ class UserService:
 
         # If the user doesn't exist, create a new social user
         new_user_data = {
-            'email': user_info.get('email'),
-            'first_name': user_info.get('given_name'),
-            'last_name': user_info.get('family_name'),
-            'is_active': True
+            "email": user_info.get("email"),
+            "first_name": user_info.get("given_name"),
+            "last_name": user_info.get("family_name"),
+            "is_active": True,
         }
-        new_user = await self.create_social_user(new_user_data, provider=provider, provider_user_id=provider_user_id)
+        new_user = await self.create_social_user(
+            new_user_data, provider=provider, provider_user_id=provider_user_id
+        )
 
         return new_user
 
-    async def get_user_by_provider_id(self, provider: str, provider_user_id: str) -> User | None:
+    async def get_user_by_provider_id(
+        self, provider: str, provider_user_id: str
+    ) -> User | None:
         """
         Fetch the user from the database by their OAuth provider's user ID and provider name.
 
@@ -486,9 +530,9 @@ class UserService:
         user_social_account = await self.db.fetch_by_query_first_many_conditions(
             model_class=UserSocialAccount,
             columns_values=[
-                ('provider', provider),
-                ('provider_user_id', provider_user_id)
-            ]
+                ("provider", provider),
+                ("provider_user_id", provider_user_id),
+            ],
         )
 
         if user_social_account is None:
@@ -500,21 +544,25 @@ class UserService:
 
     async def get_user_info(self, user_id: UUID) -> TokenResponse:
         # Fetch the user from the database by ID.
-        user: User = await self.db.fetch_by_query_first(User, 'id', user_id)
+        user: User = await self.db.fetch_by_query_first(User, "id", user_id)
 
         # If the user doesn't exist - raise an error
         if not user:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Incorrect user's ID."
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect user's ID."
             )
 
-        return {"email": user.email, "first_name": user.first_name, "last_name": user.last_name}
+        return {
+            "email": user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+        }
+
 
 def get_user_service() -> UserService:
     return UserService(
         db=PostgresAsyncRepository(dsn=config.dsn),
         redis=AsyncRedisRepository(redis_url=config.redis_url),
         secret_key=config.secret_key,
-        algorithm="HS256"
+        algorithm="HS256",
     )

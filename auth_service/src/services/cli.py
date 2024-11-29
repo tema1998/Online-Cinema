@@ -37,7 +37,7 @@ async def create_superuser_async():
 
     hashed_password = generate_password_hash(password)
 
-    existing_user = await user_service.db.fetch_by_query_first(User, 'login', login)
+    existing_user = await user_service.db.fetch_by_query_first(User, "login", login)
     if existing_user:
         typer.echo(f"User with login '{login}' already exists.")
         return
@@ -47,7 +47,7 @@ async def create_superuser_async():
         password=hashed_password,
         first_name=first_name,
         last_name=last_name,
-        is_superuser=True
+        is_superuser=True,
     )
 
     await user_service.db.insert(user)

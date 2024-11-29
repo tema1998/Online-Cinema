@@ -37,10 +37,7 @@ class GenreService(BaseService):
         return None
 
     async def get_popular_films(
-            self,
-            genre_id: str,
-            page_number: int = 1,
-            page_size: int = 50
+        self, genre_id: str, page_number: int = 1, page_size: int = 50
     ) -> Optional[List[FilmListInput]]:
         """Retrieve films sorted by IMDb rating based on genre ID."""
 
@@ -56,22 +53,26 @@ class GenreService(BaseService):
                                 "query": {
                                     "bool": {
                                         "must": [
-                                            {"term": {"genres.id": genre_id}}  # Filter by genre ID
+                                            {
+                                                "term": {"genres.id": genre_id}
+                                            }  # Filter by genre ID
                                         ]
                                     }
-                                }
+                                },
                             }
                         }
                     ]
                 }
             },
             "sort": [
-                {"imdb_rating": {"order": "desc"}}  # Sort by IMDb rating in descending order
+                {
+                    "imdb_rating": {"order": "desc"}
+                }  # Sort by IMDb rating in descending order
             ],
-            "from": (page_number - 1) * page_size  # Pagination
+            "from": (page_number - 1) * page_size,  # Pagination
         }
 
-        search_results = await self.search(query_body=query_body, index='movies')
+        search_results = await self.search(query_body=query_body, index="movies")
 
         if search_results:
             return [FilmListInput(**item) for item in search_results]
@@ -79,5 +80,7 @@ class GenreService(BaseService):
 
 
 # The main dependency function to create the GenreService
-def get_genre_service(search_engine: ElasticAsyncSearchEngine = Depends(get_search_engine)) -> GenreService:
+def get_genre_service(
+    search_engine: ElasticAsyncSearchEngine = Depends(get_search_engine),
+) -> GenreService:
     return GenreService(search_engine)

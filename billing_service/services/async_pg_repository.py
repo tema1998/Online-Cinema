@@ -16,24 +16,32 @@ class PostgresAsyncRepository:
     def __init__(self, dsn: str):
         self.engine = create_async_engine(dsn, echo=True)
         self.async_session = sessionmaker(
-            bind=self.engine,
-            class_=AsyncSession,
-            expire_on_commit=False
+            bind=self.engine, class_=AsyncSession, expire_on_commit=False
         )
 
-    async def fetch_by_id(self, model_class: Type[Base], record_id: str) -> Optional[Any]:
+    async def fetch_by_id(
+        self, model_class: Type[Base], record_id: str
+    ) -> Optional[Any]:
         async with self.async_session() as session:
             result = await session.get(model_class, record_id)
             return result
 
-    async def fetch_by_query_all(self, model_class: Type[Base], column: str, value: Any) -> Optional[List[Any]]:
+    async def fetch_by_query_all(
+        self, model_class: Type[Base], column: str, value: Any
+    ) -> Optional[List[Any]]:
         async with self.async_session() as session:
             stmt = select(model_class).where(getattr(model_class, column) == value)
             result = await session.execute(stmt)
             return result.scalars().all()
 
-    async def fetch_by_query_all_pagination(self, model_class: Type[Base], column: str, value: Any, skip: int = 0,
-                                            limit: int = 10) -> List[Any]:
+    async def fetch_by_query_all_pagination(
+        self,
+        model_class: Type[Base],
+        column: str,
+        value: Any,
+        skip: int = 0,
+        limit: int = 10,
+    ) -> List[Any]:
         async with self.async_session() as session:
             stmt = (
                 select(model_class)
@@ -44,8 +52,9 @@ class PostgresAsyncRepository:
             result = await session.execute(stmt)
             return result.scalars().all()
 
-    async def fetch_by_query_all_joinedload(self, model_class: Type[Base], column: str, value: Any,
-                                            joinedload_field: str) -> Optional[List[Any]]:
+    async def fetch_by_query_all_joinedload(
+        self, model_class: Type[Base], column: str, value: Any, joinedload_field: str
+    ) -> Optional[List[Any]]:
         """
         Get
         @param model_class: Model
@@ -55,25 +64,33 @@ class PostgresAsyncRepository:
         @return:
         """
         async with self.async_session() as session:
-            stmt = select(model_class).options(joinedload(getattr(model_class, joinedload_field))).where(
-                getattr(model_class, column) == value)
+            stmt = (
+                select(model_class)
+                .options(joinedload(getattr(model_class, joinedload_field)))
+                .where(getattr(model_class, column) == value)
+            )
             result = await session.execute(stmt)
             return result.scalars().unique().all()
 
-    async def fetch_by_query_first(self, model_class: Type[Base], column: str, value: Any) -> Optional[Any]:
+    async def fetch_by_query_first(
+        self, model_class: Type[Base], column: str, value: Any
+    ) -> Optional[Any]:
         async with self.async_session() as session:
             stmt = select(model_class).where(getattr(model_class, column) == value)
             result = await session.execute(stmt)
             return result.scalars().first()
 
-    async def count_by_query(self, model_class: Type[Base], column: str, value: Any) -> int:
+    async def count_by_query(
+        self, model_class: Type[Base], column: str, value: Any
+    ) -> int:
         async with self.async_session() as session:
             stmt = select(func.count()).where(getattr(model_class, column) == value)
             result = await session.execute(stmt)
             return result.scalar()
 
-    async def fetch_by_query_first_many_conditions(self, model_class: Type[Base], columns_values: [(str, Any)]) -> \
-            Optional[Any]:
+    async def fetch_by_query_first_many_conditions(
+        self, model_class: Type[Base], columns_values: [(str, Any)]
+    ) -> Optional[Any]:
         """
         Get first entry by many conditions.
         @param model_class: Model
@@ -117,7 +134,9 @@ class PostgresAsyncRepository:
             # Fetch the updated record
             updated_record = result.scalar()
             if updated_record is None:
-                raise NoResultFound(f"No {obj.__class__.__name__} found with id: {obj.id}")
+                raise NoResultFound(
+                    f"No {obj.__class__.__name__} found with id: {obj.id}"
+                )
 
             return updated_record
 

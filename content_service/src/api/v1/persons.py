@@ -19,18 +19,18 @@ router = APIRouter()
 )
 @cache(expire=60)
 async def person_search(
-        query: str = Query('', description="Search query for person name"),
-        pagination: PaginationParams = Depends(PaginationParams),
-        person_service: PersonService = Depends(get_person_service),
+    query: str = Query("", description="Search query for person name"),
+    pagination: PaginationParams = Depends(PaginationParams),
+    person_service: PersonService = Depends(get_person_service),
 ) -> list[PersonWithFilms]:
     found_persons = await person_service.person_search(
-        query=query,
-        page_size=pagination.page_size,
-        page_number=pagination.page
+        query=query, page_size=pagination.page_size, page_number=pagination.page
     )
 
     if not found_persons:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Person not found.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"Person not found."
+        )
 
     return found_persons
 
@@ -42,16 +42,17 @@ async def person_search(
 )
 @cache(expire=60)
 async def person(
-        pagination: PaginationParams = Depends(PaginationParams),
-        person_service: PersonService = Depends(get_person_service),
+    pagination: PaginationParams = Depends(PaginationParams),
+    person_service: PersonService = Depends(get_person_service),
 ) -> list[PersonUUID]:
     person_list = await person_service.person_list(
-        page_size=pagination.page_size,
-        page_number=pagination.page
+        page_size=pagination.page_size, page_number=pagination.page
     )
 
     if not person_list:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"There is no persons.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"There is no persons."
+        )
 
     return person_list
 
@@ -63,18 +64,21 @@ async def person(
 )
 @cache(expire=60)
 async def persons(
-        person_id: str = Path(..., description="The ID of person to find films with this person."),
-        pagination: PaginationParams = Depends(PaginationParams),
-        person_service: PersonService = Depends(get_person_service),
+    person_id: str = Path(
+        ..., description="The ID of person to find films with this person."
+    ),
+    pagination: PaginationParams = Depends(PaginationParams),
+    person_service: PersonService = Depends(get_person_service),
 ) -> PersonUUID:
     person = await person_service.person_detail(
-        person_id=person_id,
-        page_size=pagination.page_size,
-        page_number=pagination.page
+        person_id=person_id, page_size=pagination.page_size, page_number=pagination.page
     )
 
     if not person:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No person with ID: {person_id}")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No person with ID: {person_id}",
+        )
 
     return person
 
@@ -86,16 +90,17 @@ async def persons(
 )
 @cache(expire=60)
 async def films_with_person(
-        person_id: str,
-        pagination: PaginationParams = Depends(PaginationParams),
-        person_service: PersonService = Depends(get_person_service),
+    person_id: str,
+    pagination: PaginationParams = Depends(PaginationParams),
+    person_service: PersonService = Depends(get_person_service),
 ) -> list[FilmListOutput] | None:
     films = await person_service.person_films(
-        person_id=person_id,
-        page_number=pagination.page,
-        page_size=pagination.page_size
+        person_id=person_id, page_number=pagination.page, page_size=pagination.page_size
     )
     if not films:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No films found with this person")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No films found with this person",
+        )
 
     return films

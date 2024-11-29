@@ -5,7 +5,9 @@ from elasticsearch.helpers import bulk
 
 from backoff import backoff
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 class DataLoader:
@@ -21,6 +23,10 @@ class DataLoader:
         :return: Result of loading to ES.
         """
         client = Elasticsearch(hosts=self.elasticsearch_host)
-        success, _ = bulk(client, data)  # `success` is the number of successfully indexed documents
-        logging.info(f"Successfully indexed {success} records into index {self.index_name}")
+        success, _ = bulk(
+            client, data
+        )  # `success` is the number of successfully indexed documents
+        logging.info(
+            f"Successfully indexed {success} records into index {self.index_name}"
+        )
         return success

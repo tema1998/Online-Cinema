@@ -9,7 +9,9 @@ from src.core.logger import LOGGING
 
 class Settings(BaseSettings):
     # Корень проекта
-    base_dir: ClassVar[str] = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    base_dir: ClassVar[str] = os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__))
+    )
 
     # Название проекта. Используется в Swagger-документации
     project_name: str = os.getenv("AUTH_PROJECT_NAME", "movies")
@@ -29,10 +31,16 @@ class Settings(BaseSettings):
     sqlalchemy_echo: bool = os.getenv("SQLALCHEMY_ECHO", False)
 
     # Google OAuth settings
-    google_client_id: str = os.getenv("GOOGLE_CLIENT_ID",
-                                      "953340218392-lrsn9fhias75cjffgoesadva2ejfhk9p.apps.googleusercontent.com")
-    google_client_secret: str = os.getenv("GOOGLE_CLIENT_SECRET", "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")
-    google_metadata_url: str = "https://accounts.google.com/.well-known/openid-configuration"
+    google_client_id: str = os.getenv(
+        "GOOGLE_CLIENT_ID",
+        "953340218392-lrsn9fhias75cjffgoesadva2ejfhk9p.apps.googleusercontent.com",
+    )
+    google_client_secret: str = os.getenv(
+        "GOOGLE_CLIENT_SECRET", "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"
+    )
+    google_metadata_url: str = (
+        "https://accounts.google.com/.well-known/openid-configuration"
+    )
 
     # Secret key for JWT
     secret_key: str = os.getenv("SECRET_KEY", "practix")
@@ -41,7 +49,7 @@ class Settings(BaseSettings):
 
     # Jaeger Config
     enable_tracer: bool = os.getenv("ENABLE_TRACER", False)
-    jaeger_host: str = os.getenv("JAEGER_HOST", 'jaeger')
+    jaeger_host: str = os.getenv("JAEGER_HOST", "jaeger")
     jaeger_port: int = os.getenv("JAEGER_PORT", 6831)
 
     # Middleware settings
@@ -49,7 +57,7 @@ class Settings(BaseSettings):
 
     @property
     def dsn(self) -> str:
-        return f'postgresql+asyncpg://{self.pg_user}:{self.pg_pass}@{self.pg_host}:{self.pg_port}/{self.pg_db}'
+        return f"postgresql+asyncpg://{self.pg_user}:{self.pg_pass}@{self.pg_host}:{self.pg_port}/{self.pg_db}"
 
     @property
     def redis_url(self) -> str:

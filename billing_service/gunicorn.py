@@ -1,4 +1,5 @@
 """Gunicorn settings."""
+
 import sys
 import threading
 import traceback
@@ -19,9 +20,7 @@ spew = False
 errorlog = "-"
 accesslog = "-"
 loglevel = "info"
-access_log_format = (
-    '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
-)
+access_log_format = '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
 
 
 def post_fork(server: Arbiter, worker: UvicornWorker) -> None:

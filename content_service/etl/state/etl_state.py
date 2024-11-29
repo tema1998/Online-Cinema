@@ -25,8 +25,10 @@ class StateETL:
         else:
             state_modified = "1800-01-01"
             self.state.set_state(f"{table_name}", state_modified)
-            logging.info(f"There is no state for {table_name} ETL process. State was successfully created. The ETL "
-                         f"process begins.")
+            logging.info(
+                f"There is no state for {table_name} ETL process. State was successfully created. The ETL "
+                f"process begins."
+            )
 
         return state_modified
 
@@ -46,6 +48,6 @@ class StateETL:
         Method resets all states.
         :return: None
         """
-        self.state.set_state('film_work', "1800-01-01")
-        self.state.set_state('genre', "1800-01-01")
-        self.state.set_state('person', "1800-01-01")
+        self.state.set_state("film_work", "1800-01-01")
+        self.state.set_state("genre", "1800-01-01")
+        self.state.set_state("person", "1800-01-01")
