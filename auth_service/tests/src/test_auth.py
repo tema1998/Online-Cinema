@@ -30,7 +30,7 @@ async def test_register_user(db_session: AsyncSession):
             "login": "testuser",
             "password": "securepassword",
             "first_name": "FirstName",
-            "last_name": "LastName"
+            "last_name": "LastName",
         }
 
         # Send the POST request to the registration endpoint
@@ -61,11 +61,13 @@ async def test_login_user(db_session: AsyncSession, user_service: UserService):
             "login": "testuser1",
             "password": "securepassword1",
             "first_name": "FirstName1",
-            "last_name": "LastName1"
+            "last_name": "LastName1",
         }
 
         # Register the user
-        register_response = await ac.post("/api/v1/auth/register", json=registration_data)
+        register_response = await ac.post(
+            "/api/v1/auth/register", json=registration_data
+        )
         assert register_response.status_code == status.HTTP_201_CREATED
 
         # Now define the login data
@@ -87,7 +89,9 @@ async def test_login_user(db_session: AsyncSession, user_service: UserService):
         assert data["token_type"] == "bearer"
 
         # Verify that the user ID in the token matches the registered user
-        user_id_from_token = await user_service.get_user_id_from_token(data["access_token"])
+        user_id_from_token = await user_service.get_user_id_from_token(
+            data["access_token"]
+        )
         #
         # Check that the user was actually created in the database and the token is correct
         stmt = select(User).filter_by(login=registration_data["login"])
@@ -105,11 +109,13 @@ async def test_refresh_user_token(user_service, db_session: AsyncSession):
             "login": "testuser3",
             "password": "securepassword3",
             "first_name": "FirstName3",
-            "last_name": "LastName3"
+            "last_name": "LastName3",
         }
 
         # Register the user
-        register_response = await ac.post("/api/v1/auth/register", json=registration_data)
+        register_response = await ac.post(
+            "/api/v1/auth/register", json=registration_data
+        )
         assert register_response.status_code == status.HTTP_201_CREATED
 
         # Step 2: Login to get the initial access and refresh tokens
@@ -130,9 +136,7 @@ async def test_refresh_user_token(user_service, db_session: AsyncSession):
         refresh_token = login_response_data["refresh_token"]
 
         # Step 3: Test the refresh token endpoint
-        refresh_request = {
-            "refresh_token": refresh_token
-        }
+        refresh_request = {"refresh_token": refresh_token}
 
         refresh_response = await ac.post("/api/v1/auth/refresh", json=refresh_request)
         assert refresh_response.status_code == status.HTTP_200_OK
@@ -154,7 +158,9 @@ async def test_refresh_user_token(user_service, db_session: AsyncSession):
         assert user_in_db is not None
         #
         # Verify the user_id in the token matches the registered user
-        user_id_from_token = await user_service.get_user_id_from_token(refresh_response_data["access_token"])
+        user_id_from_token = await user_service.get_user_id_from_token(
+            refresh_response_data["access_token"]
+        )
         assert str(user_id_from_token) == str(user_in_db.id)
 
 
@@ -166,11 +172,13 @@ async def test_logout_user(user_service, db_session: AsyncSession):
             "login": "testuser4",
             "password": "securepassword4",
             "first_name": "FirstName4",
-            "last_name": "LastName4"
+            "last_name": "LastName4",
         }
 
         # Register the user
-        register_response = await ac.post("/api/v1/auth/register", json=registration_data)
+        register_response = await ac.post(
+            "/api/v1/auth/register", json=registration_data
+        )
         assert register_response.status_code == status.HTTP_201_CREATED
 
         # Step 2: Login to get the initial access and refresh tokens
@@ -191,15 +199,13 @@ async def test_logout_user(user_service, db_session: AsyncSession):
         refresh_token = login_response_data["refresh_token"]
 
         # Step 3: Test the logout endpoint
-        logout_request = {
-            "refresh_token": refresh_token
-        }
+        logout_request = {"refresh_token": refresh_token}
 
-        headers = {
-            "Authorization": f"Bearer {access_token}"
-        }
+        headers = {"Authorization": f"Bearer {access_token}"}
 
-        logout_response = await ac.post("/api/v1/auth/logout", json=logout_request, headers=headers)
+        logout_response = await ac.post(
+            "/api/v1/auth/logout", json=logout_request, headers=headers
+        )
         assert logout_response.status_code == status.HTTP_200_OK
         logout_response_data = logout_response.json()
 
@@ -219,11 +225,13 @@ async def test_update_user_credentials(user_service, db_session: AsyncSession):
             "login": "testuser5",
             "password": "securepassword5",
             "first_name": "FirstName5",
-            "last_name": "LastName5"
+            "last_name": "LastName5",
         }
 
         # Register the user
-        register_response = await ac.post("/api/v1/auth/register", json=registration_data)
+        register_response = await ac.post(
+            "/api/v1/auth/register", json=registration_data
+        )
         assert register_response.status_code == status.HTTP_201_CREATED
 
         # Step 2: Login to get the initial access token
@@ -241,17 +249,14 @@ async def test_update_user_credentials(user_service, db_session: AsyncSession):
         access_token = login_response_data["access_token"]
 
         # Step 3: Prepare the update request data
-        update_data = {
-            "new_login": "updateduser",
-            "new_password": "newsecurepassword"
-        }
+        update_data = {"new_login": "updateduser", "new_password": "newsecurepassword"}
 
-        headers = {
-            "Authorization": f"Bearer {access_token}"
-        }
+        headers = {"Authorization": f"Bearer {access_token}"}
 
         # Send the PATCH request to update user credentials
-        update_response = await ac.patch("/api/v1/auth/update", json=update_data, headers=headers)
+        update_response = await ac.patch(
+            "/api/v1/auth/update", json=update_data, headers=headers
+        )
         assert update_response.status_code == status.HTTP_200_OK
 
 
@@ -263,11 +268,13 @@ async def test_get_user_login_history(user_service, db_session: AsyncSession):
             "login": "testuser6",
             "password": "securepassword6",
             "first_name": "FirstName6",
-            "last_name": "LastName6"
+            "last_name": "LastName6",
         }
 
         # Register the user
-        register_response = await ac.post("/api/v1/auth/register", json=registration_data)
+        register_response = await ac.post(
+            "/api/v1/auth/register", json=registration_data
+        )
         assert register_response.status_code == status.HTTP_201_CREATED
 
         # Step 2: Login to get the access token
@@ -284,12 +291,12 @@ async def test_get_user_login_history(user_service, db_session: AsyncSession):
         assert "access_token" in login_response_data
         access_token = login_response_data["access_token"]
 
-        headers = {
-            "Authorization": f"Bearer {access_token}"
-        }
+        headers = {"Authorization": f"Bearer {access_token}"}
 
         # Step 3: Fetch the login history for the user
-        login_history_response = await ac.get("/api/v1/auth/login-history", headers=headers)
+        login_history_response = await ac.get(
+            "/api/v1/auth/login-history", headers=headers
+        )
         assert login_history_response.status_code == status.HTTP_200_OK
 
         # Verify the login history data

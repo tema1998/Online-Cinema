@@ -31,6 +31,7 @@ async def pika_lifespan():
     yield
     await close_pika_connection()
 
+
 # TODO Доделать
 # async def get_connection() -> AbstractRobustConnection:
 #     return await aio_pika.connect_robust("amqp://guest:guest@localhost/")

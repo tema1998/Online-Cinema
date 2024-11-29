@@ -16,7 +16,7 @@ class AsyncRedisRepository:
         value = await self.redis.get(key)
         if value is None:
             return None
-        return value.decode('utf-8')
+        return value.decode("utf-8")
 
     async def delete(self, key: str) -> bool:
         return await self.redis.delete(key)
@@ -32,4 +32,4 @@ class AsyncRedisRepository:
 
     async def keys(self, pattern: str = "*") -> List[str]:
         keys = await self.redis.keys(pattern)
-        return [key.decode('utf-8') for key in keys]
+        return [key.decode("utf-8") for key in keys]

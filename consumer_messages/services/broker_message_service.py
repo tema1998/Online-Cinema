@@ -5,7 +5,9 @@ from fastapi import HTTPException
 from consumer_messages.dependencies.dependencies import get_rabbitmq_channel
 
 
-async def send_message_to_broker(message: dict, queue_name: str, persistent: bool = True):
+async def send_message_to_broker(
+    message: dict, queue_name: str, persistent: bool = True
+):
     try:
         # Prepare the message body to be sent to RabbitMQ
         message_body = json.dumps(message)
@@ -13,15 +15,18 @@ async def send_message_to_broker(message: dict, queue_name: str, persistent: boo
         # Use async for to retrieve the channel from the async generator
         async for channel in get_rabbitmq_channel():
             # Determine delivery mode based on the `persistent` flag
-            delivery_mode = aio_pika.DeliveryMode.PERSISTENT if persistent else aio_pika.DeliveryMode.NON_PERSISTENT
+            delivery_mode = (
+                aio_pika.DeliveryMode.PERSISTENT
+                if persistent
+                else aio_pika.DeliveryMode.NON_PERSISTENT
+            )
 
             # Publish the message to the queue
             await channel.default_exchange.publish(
                 aio_pika.Message(
-                    body=message_body.encode(),
-                    delivery_mode=delivery_mode
+                    body=message_body.encode(), delivery_mode=delivery_mode
                 ),
-                routing_key=queue_name
+                routing_key=queue_name,
             )
 
             break  # Exit the loop after using the channel
@@ -30,4 +35,6 @@ async def send_message_to_broker(message: dict, queue_name: str, persistent: boo
 
     except Exception as e:
         # ???????????????????????????????????????????????????????????
-        raise HTTPException(status_code=500, detail=f"Failed to send message to broker: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to send message to broker: {str(e)}"
+        )

@@ -20,10 +20,7 @@ pytest_plugins = [
 ]
 
 # Create the async session factory
-async_session_factory = sessionmaker(
-    class_=AsyncSession,
-    expire_on_commit=False
-)
+async_session_factory = sessionmaker(class_=AsyncSession, expire_on_commit=False)
 
 
 # Dependency to provide a session to FastAPI routes or other parts of the application
@@ -78,9 +75,7 @@ async def db_engine(event_loop):
     """Create an asynchronous SQLAlchemy engine for the test database using test settings."""
     loop = asyncio.get_running_loop()
     engine = create_async_engine(
-        test_settings.db_url,
-        echo=test_settings.sqlalchemy_echo,
-        future=True
+        test_settings.db_url, echo=test_settings.sqlalchemy_echo, future=True
     )
     await create_database(engine)
     yield engine
@@ -114,21 +109,19 @@ async def postgres_repo() -> PostgresAsyncRepository:
 
 
 @pytest_asyncio.fixture(scope="session")
-async def user_service(postgres_repo: PostgresAsyncRepository, redis_client: Redis) -> UserService:
+async def user_service(
+    postgres_repo: PostgresAsyncRepository, redis_client: Redis
+) -> UserService:
     # Create the UserService instance with the PostgresAsyncRepository and Redis client
     return UserService(
-        db=postgres_repo,
-        redis=redis_client,
-        secret_key=test_settings.secret_key
+        db=postgres_repo, redis=redis_client, secret_key=test_settings.secret_key
     )
 
 
 @pytest_asyncio.fixture
 def make_get_request(scope="session"):
     async def inner(
-            query: str,
-            params: dict = None,
-            headers: dict[str, Any] | None = None
+        query: str, params: dict = None, headers: dict[str, Any] | None = None
     ) -> Response:
         """
         Fixture for making GET request to API.
@@ -152,9 +145,9 @@ def make_get_request(scope="session"):
 @pytest_asyncio.fixture(scope="session")
 def make_post_request():
     async def inner(
-            query: str,
-            form_data: dict[str, Any] | None = None,
-            headers: dict[str, Any] | None = None,
+        query: str,
+        form_data: dict[str, Any] | None = None,
+        headers: dict[str, Any] | None = None,
     ) -> Response:
         """
         Fixture for making POST request to API.
@@ -167,7 +160,9 @@ def make_post_request():
         url = f"{test_settings.api_url}{query}"
 
         async with aiohttp.ClientSession() as session:
-            async with session.post(url=url, json=form_data, headers=headers) as response:
+            async with session.post(
+                url=url, json=form_data, headers=headers
+            ) as response:
                 return Response(
                     body=await response.json(),
                     headers=response.headers,
@@ -180,9 +175,9 @@ def make_post_request():
 @pytest_asyncio.fixture(scope="session")
 def make_delete_request():
     async def inner(
-            query: str,
-            form_data: dict[str, Any] | None = None,
-            headers: dict[str, Any] | None = None,
+        query: str,
+        form_data: dict[str, Any] | None = None,
+        headers: dict[str, Any] | None = None,
     ) -> Response:
         """
         Fixture for making DELETE request to API.
@@ -195,7 +190,9 @@ def make_delete_request():
         url = f"{test_settings.api_url}{query}"
 
         async with aiohttp.ClientSession() as session:
-            async with session.delete(url=url, json=form_data, headers=headers) as response:
+            async with session.delete(
+                url=url, json=form_data, headers=headers
+            ) as response:
                 return Response(
                     body=await response.json(),
                     headers=response.headers,
@@ -208,9 +205,9 @@ def make_delete_request():
 @pytest_asyncio.fixture(scope="session")
 def make_update_request():
     async def inner(
-            query: str,
-            form_data: dict[str, Any] | None = None,
-            headers: dict[str, Any] | None = None,
+        query: str,
+        form_data: dict[str, Any] | None = None,
+        headers: dict[str, Any] | None = None,
     ) -> Response:
         """
         Fixture for making PUT request to API.
@@ -223,7 +220,9 @@ def make_update_request():
         url = f"{test_settings.api_url}{query}"
 
         async with aiohttp.ClientSession() as session:
-            async with session.put(url=url, json=form_data, headers=headers) as response:
+            async with session.put(
+                url=url, json=form_data, headers=headers
+            ) as response:
                 return Response(
                     body=await response.json(),
                     headers=response.headers,

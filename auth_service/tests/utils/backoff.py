@@ -6,7 +6,9 @@ from functools import wraps
 from redis import RedisError as redis_error
 
 
-def backoff(start_sleep_time=0.1, factor=2, border_sleep_time=10.0, limit_of_retries=10):
+def backoff(
+    start_sleep_time=0.1, factor=2, border_sleep_time=10.0, limit_of_retries=10
+):
     """
     Функция для повторного выполнения функции через некоторое время, если возникла ошибка. Использует наивный
     экспоненциальный рост времени повтора (factor) до граничного времени ожидания (border_sleep_time)
@@ -34,7 +36,9 @@ def backoff(start_sleep_time=0.1, factor=2, border_sleep_time=10.0, limit_of_ret
                     time.sleep(delay)
                     retries += 1
                     # Compute delay and chose between border_sleep_time and computed
-                    computed_delay = min(start_sleep_time * (factor ** retries), border_sleep_time)
+                    computed_delay = min(
+                        start_sleep_time * (factor**retries), border_sleep_time
+                    )
                     # Add jitter
                     delay = computed_delay / 2 + random.uniform(0, computed_delay / 2)
                     if isinstance(e, redis_error):
@@ -43,7 +47,9 @@ def backoff(start_sleep_time=0.1, factor=2, border_sleep_time=10.0, limit_of_ret
                         logging.error(msg=f"Unknown error. {e}")
 
                     if limit_of_retries != 0 and retries > limit_of_retries:
-                        logging.critical(msg=f"The number of reconnections exceeded. {e}")
+                        logging.critical(
+                            msg=f"The number of reconnections exceeded. {e}"
+                        )
                         raise
 
         return inner

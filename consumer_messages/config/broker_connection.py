@@ -12,4 +12,3 @@ async def get_rabbitmq_channel():
     finally:
         await channel.close()
         await connection.close()
-

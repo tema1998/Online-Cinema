@@ -7,14 +7,20 @@ from sqlalchemy.exc import IntegrityError
 
 from src.core.config import config
 from src.models.entity import Role, User, UserRole
-from src.schemas.entity import RoleCreate, RoleInDB, RolesInDB, RoleId, UpdateRoleRequest, UserPermissions
+from src.schemas.entity import (
+    RoleCreate,
+    RoleInDB,
+    RolesInDB,
+    RoleId,
+    UpdateRoleRequest,
+    UserPermissions,
+)
 from src.services.async_pg_repository import PostgresAsyncRepository
 from src.services.user_service import get_user_service
 
 
 class RoleService:
-    def __init__(self,
-                 db: PostgresAsyncRepository):
+    def __init__(self, db: PostgresAsyncRepository):
         self.db = db
 
     async def create_role(self, role_data: dict) -> Role:
@@ -25,12 +31,13 @@ class RoleService:
         """
 
         # Check if the role already exists by role's name
-        existing_role = await self.db.fetch_by_query_all(Role, 'name', role_data['name'])
+        existing_role = await self.db.fetch_by_query_all(
+            Role, "name", role_data["name"]
+        )
 
         if existing_role:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Role already exists."
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Role already exists."
             )
 
         try:
@@ -42,7 +49,7 @@ class RoleService:
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail="All the required fields must be filled in.",
             )
-        role_orm = Role(**role.model_dump(mode='json'))
+        role_orm = Role(**role.model_dump(mode="json"))
         await self.db.insert(role_orm)
         return role_orm
 
@@ -56,8 +63,7 @@ class RoleService:
 
         if not roles:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="There is no roles."
+                status_code=status.HTTP_400_BAD_REQUEST, detail="There is no roles."
             )
 
         roles_model = RolesInDB(roles=[RoleInDB(**role.to_dict()) for role in roles])
@@ -81,12 +87,13 @@ class RoleService:
             )
 
         # Check if the role exists
-        existing_role = await self.db.fetch_by_query_all(Role, 'id', validated_role_id.id)
+        existing_role = await self.db.fetch_by_query_all(
+            Role, "id", validated_role_id.id
+        )
 
         if not existing_role:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Role doesn't exist."
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Role doesn't exist."
             )
 
         await self.db.delete(Role, validated_role_id.id)
@@ -99,12 +106,11 @@ class RoleService:
         @return: Updated role.
         """
         # Fetch the role by ID
-        role = await self.db.fetch_by_query_first(Role, 'id', role_id)
+        role = await self.db.fetch_by_query_first(Role, "id", role_id)
 
         if not role:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Role doesn't exist."
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Role doesn't exist."
             )
         update_data = role_data.dict(exclude_unset=True)
 
@@ -121,7 +127,7 @@ class RoleService:
         except IntegrityError:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="The name of the role is already taken."
+                detail="The name of the role is already taken.",
             )
 
         return role
@@ -133,28 +139,27 @@ class RoleService:
         @param role_name: Name of the role.
         """
         # Fetch the role by ID
-        role = await self.db.fetch_by_query_first(Role, 'name', role_name)
+        role = await self.db.fetch_by_query_first(Role, "name", role_name)
 
         # Fetch the user by ID
-        user = await self.db.fetch_by_query_first(User, 'id', user_id)
+        user = await self.db.fetch_by_query_first(User, "id", user_id)
 
         if not role:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Role doesn't exist."
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Role doesn't exist."
             )
         if not user:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User doesn't exist."
+                status_code=status.HTTP_400_BAD_REQUEST, detail="User doesn't exist."
             )
 
-        existing_user_role = await self.db.fetch_by_query_first_many_conditions(UserRole, [('user_id', user.id),
-                                                                                           ('role_id', role.id)])
+        existing_user_role = await self.db.fetch_by_query_first_many_conditions(
+            UserRole, [("user_id", user.id), ("role_id", role.id)]
+        )
         if existing_user_role:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User already has this role."
+                detail="User already has this role.",
             )
 
         user_role = UserRole(user_id=user.id, role_id=role.id)
@@ -168,28 +173,27 @@ class RoleService:
         @param role_name: Name of the role.
         """
         # Fetch the role by ID
-        role = await self.db.fetch_by_query_first(Role, 'name', role_name)
+        role = await self.db.fetch_by_query_first(Role, "name", role_name)
 
         # Fetch the user by ID
-        user = await self.db.fetch_by_query_first(User, 'id', user_id)
+        user = await self.db.fetch_by_query_first(User, "id", user_id)
 
         if not role:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Role doesn't exist."
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Role doesn't exist."
             )
         if not user:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User doesn't exist."
+                status_code=status.HTTP_400_BAD_REQUEST, detail="User doesn't exist."
             )
 
-        existing_user_role = await self.db.fetch_by_query_first_many_conditions(UserRole, [('user_id', user.id),
-                                                                                           ('role_id', role.id)])
+        existing_user_role = await self.db.fetch_by_query_first_many_conditions(
+            UserRole, [("user_id", user.id), ("role_id", role.id)]
+        )
         if not existing_user_role:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User doesn't have this role."
+                detail="User doesn't have this role.",
             )
 
         await self.db.delete(UserRole, existing_user_role.id)
@@ -200,21 +204,22 @@ class RoleService:
         @param user_id: ID of User
         """
         # Fetch the user by ID
-        user = await self.db.fetch_by_query_first(User, 'id', user_id)
+        user = await self.db.fetch_by_query_first(User, "id", user_id)
 
         if not user:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User doesn't exist."
+                status_code=status.HTTP_400_BAD_REQUEST, detail="User doesn't exist."
             )
 
         # Get all user's roles with Role joined filed
-        user_roles = await self.db.fetch_by_query_all_joinedload(UserRole, 'user_id', user_id, 'role')
+        user_roles = await self.db.fetch_by_query_all_joinedload(
+            UserRole, "user_id", user_id, "role"
+        )
 
         if not user_roles:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User hasn't permissions."
+                detail="User hasn't permissions.",
             )
 
         # Get permissions from all user's roles
@@ -225,9 +230,12 @@ class RoleService:
 
         return UserPermissions(permissions=user_permissions)
 
-    async def check_is_superuser_by_access_token(self,
-                                                 access_token: str = Depends(
-                                                     OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login"))):
+    async def check_is_superuser_by_access_token(
+        self,
+        access_token: str = Depends(
+            OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+        ),
+    ):
         """
         Check is user a superuser by access token.
         @param access_token: User's access token.
@@ -244,6 +252,4 @@ class RoleService:
 
 
 def get_role_service() -> RoleService:
-    return RoleService(
-        db=PostgresAsyncRepository(dsn=config.dsn)
-    )
+    return RoleService(db=PostgresAsyncRepository(dsn=config.dsn))

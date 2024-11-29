@@ -19,7 +19,9 @@ def get_template(message_type, message_transfer):
         template = env.get_template(template_path)
         return template
     except Exception as e:
-        logging.error(f"Template for {message_transfer}/{message_type} not found: {str(e)}")
+        logging.error(
+            f"Template for {message_transfer}/{message_type} not found: {str(e)}"
+        )
         raise
 
 
@@ -27,7 +29,9 @@ def render_template(template, data):
     return template.render(data)
 
 
-async def send_email(recipient: str, rendered_content: str, subject: Optional[str] = "Notification"):
+async def send_email(
+    recipient: str, rendered_content: str, subject: Optional[str] = "Notification"
+):
     """
     Asynchronously sends an email to the recipient.
 
@@ -44,7 +48,9 @@ async def send_email(recipient: str, rendered_content: str, subject: Optional[st
     msg["Reply-To"] = settings.smtp_email  # Set a Reply-To address
 
     # Add plain text version of the message
-    plain_text_content = "Please confirm your email address by clicking the link provided."
+    plain_text_content = (
+        "Please confirm your email address by clicking the link provided."
+    )
     msg.attach(MIMEText(plain_text_content, "plain"))
 
     # Attach the rendered HTML content
@@ -63,7 +69,7 @@ async def send_email(recipient: str, rendered_content: str, subject: Optional[st
             username=settings.smtp_email,
             password=settings.smtp_pass,
             tls_context=tls_context,
-            use_tls=True  # Use SSL/TLS directly on port 465
+            use_tls=True,  # Use SSL/TLS directly on port 465
         )
         logging.info(f"Email sent to {recipient}")
     except SMTPException as e:
