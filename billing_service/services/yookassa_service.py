@@ -4,7 +4,7 @@ from uuid import UUID
 from pydantic_settings import BaseSettings
 from yookassa import Configuration, Payment
 from core.config import config
-from models.entity import Order, Subscription
+from models.entity import Order
 from services.async_pg_repository import PostgresAsyncRepository
 from services.auth_service import AuthService
 from services.payment_service import PaymentService
@@ -59,17 +59,13 @@ class YookassaService(PaymentService):
         order = await self.db.fetch_by_query_first(
             Order, "payment_id", request["object"]["id"]
         )
-        subscription = await self.db.fetch_by_query_first(
-            Subscription, "id", order.subscription_id
-        )
 
         data = {
             "order_id": order.id,
             "user_id": order.user_id,
             "email": order.user_email,
-            "subscription_id": order.subscription_id,
-            "subscription_name": subscription.name,
-            "subscription_permissions": subscription.permissions,
+            "number_of_month": order.number_of_month,
+            "created_at": order.created_at
         }
 
         if request["event"] == "payment.succeeded":

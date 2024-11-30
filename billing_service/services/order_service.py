@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 
 from core.config import config
-from models.entity import Order, Subscription
+from models.entity import Order, Premium
 from schemas.entity import OrderCreate
 from services.async_pg_repository import PostgresAsyncRepository
 
@@ -18,18 +18,19 @@ class OrderService:
         :return:
         """
 
-        # Get subscription.
-        subscription = await self.db.fetch_by_query_first(
-            Subscription, "id", order_data["subscription_id"]
+        # Get active premium model. There is only one active premium with actual price.
+        premium = await self.db.fetch_by_query_first(
+            Premium, "is_active", True
         )
 
-        # Get subscription's price.
-        if subscription:
-            subscription_price = subscription.to_dict()["price"]
+        # Get premium's price.
+        if premium:
+            premium_dict = premium.to_dict()
+            premium_id, premium_price = premium_dict["id"], premium_dict["price"]
         else:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Subscription with ID={order_data['subscription_id']} doesn't exist.",
+                detail=f"There is no active premium subscriptions.",
             )
 
         # Validate order data through OrderCreate pydantic model.
@@ -37,7 +38,8 @@ class OrderService:
             status="Processed",
             user_id=user_info["id"],
             user_email=user_info["email"],
-            total_price=subscription_price * order_data["number_of_month"],
+            total_price=premium_price * order_data["number_of_month"],
+            premium_id=premium_id,
             **order_data,
         )
 

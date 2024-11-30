@@ -6,7 +6,6 @@ from pydantic import BaseModel, Field, EmailStr
 
 class OrderIn(BaseModel):
     number_of_month: int = Field(None, gt=0)
-    subscription_id: UUID
 
 
 class OrderCreate(OrderIn):
@@ -14,6 +13,7 @@ class OrderCreate(OrderIn):
     status: str
     user_id: UUID
     user_email: EmailStr
+    premium_id: UUID
 
 
 class OrderOut(OrderCreate):

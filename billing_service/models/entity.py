@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from typing import List
 
-from sqlalchemy import Column, DateTime, String, ForeignKey, DECIMAL, INTEGER, ARRAY
+from sqlalchemy import Column, DateTime, String, ForeignKey, DECIMAL, INTEGER, ARRAY, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.inspection import inspect
 from sqlalchemy.orm import relationship, Mapped, mapped_column
@@ -31,17 +31,17 @@ class UUIDMixin:
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
 
-class Subscription(Base, UUIDMixin, TimeStampedMixin):
-    __tablename__ = "subscriptions"
+class Premium(Base, UUIDMixin, TimeStampedMixin):
+    __tablename__ = "premiums"
 
     name = Column(String(50), unique=True, nullable=False)
     description = Column(String(255))
     price = Column(DECIMAL, nullable=False)
-    orders: Mapped[List["Order"]] = relationship(back_populates="subscription")
-    permissions = Column(ARRAY(String))
+    orders: Mapped[List["Order"]] = relationship(back_populates="premium")
+    is_active = Column(Boolean, default=False)
 
     def __repr__(self) -> str:
-        return f"<Subscription(id={self.id}, name='{self.name}', description='{self.description}')>"
+        return f"<Premium(id={self.id}, name='{self.name}', description='{self.description}')>"
 
 
 class Order(Base, UUIDMixin, TimeStampedMixin):
@@ -54,8 +54,8 @@ class Order(Base, UUIDMixin, TimeStampedMixin):
     user_email = Column(String(255), nullable=True)
     payment_url = Column(String(255), nullable=True)
     payment_id = Column(String(255), nullable=True)
-    subscription_id: Mapped[UUID] = mapped_column(ForeignKey("subscriptions.id"))
-    subscription: Mapped["Subscription"] = relationship(back_populates="orders")
+    premium_id: Mapped[UUID] = mapped_column(ForeignKey("premiums.id"))
+    premium: Mapped["Premium"] = relationship(back_populates="orders")
 
     def __repr__(self) -> str:
         return f"<Order(id={self.id}')>"
