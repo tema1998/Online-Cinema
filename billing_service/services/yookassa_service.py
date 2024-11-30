@@ -6,6 +6,7 @@ from yookassa import Configuration, Payment
 from core.config import config
 from models.entity import Order, Subscription
 from services.async_pg_repository import PostgresAsyncRepository
+from services.auth_service import AuthService
 from services.payment_service import PaymentService
 
 Configuration.account_id = config.yookassa_shop_id
@@ -16,6 +17,7 @@ class YookassaService(PaymentService):
     def __init__(self, config: BaseSettings, db: PostgresAsyncRepository):
         self.db = db
         self.config = config
+        self.auth_service = AuthService()
         Configuration.account_id = self.config.yookassa_shop_id
         Configuration.secret_key = self.config.yookassa_secret_key
 
@@ -61,7 +63,7 @@ class YookassaService(PaymentService):
             Subscription, "id", order.subscription_id
         )
 
-        data_for_worker = {
+        data = {
             "order_id": order.id,
             "user_id": order.user_id,
             "email": order.user_email,
@@ -71,8 +73,8 @@ class YookassaService(PaymentService):
         }
 
         if request["event"] == "payment.succeeded":
-            pass
             # TODO: Call worker.
+            result = await self.auth_service.make_request_to_set_premium(data['user_id'])
 
         elif request["event"] == "payment.canceled":
             pass

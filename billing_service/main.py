@@ -7,7 +7,7 @@ from fastapi.responses import ORJSONResponse
 from starlette.middleware.sessions import SessionMiddleware
 
 from core.config import config
-from api.v1.subscription import router as subscription_router
+from api.v1.order import router as order_router
 
 
 @asynccontextmanager
@@ -70,7 +70,7 @@ app.add_middleware(
 #     return response
 
 app.include_router(
-    subscription_router, prefix="/api/v1/subscription", tags=["subscription"]
+    order_router, prefix="/api/v1/order", tags=["order"]
 )
 
 if __name__ == "__main__":

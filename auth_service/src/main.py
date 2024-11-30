@@ -18,6 +18,7 @@ from src.core.config import config
 from src.db.redis_db import get_redis, init_redis
 from src.api.auth import router as auth_router
 from src.api.roles import router as roles_router
+from src.api.premium import router as premium_router
 from src.utils.limit_of_requests import check_limit_of_requests
 
 
@@ -112,6 +113,7 @@ tracer = trace.get_tracer(__name__)
 
 app.include_router(auth_router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(roles_router, prefix="/api/v1/roles", tags=["roles"])
+app.include_router(premium_router, prefix="/api/v1/premium", tags=["premium"])
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080)

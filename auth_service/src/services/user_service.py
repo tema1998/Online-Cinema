@@ -568,6 +568,39 @@ class UserService:
             "last_name": user.last_name,
         }
 
+    async def set_premium(
+        self, user_id: str
+    ) -> bool:
+        """
+        Set user's status - premium.
+        """
+
+        # Fetch the user by ID
+        user = await self.db.fetch_by_query_first(User, "id", user_id)
+
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
+            )
+
+        if user.is_premium is True:
+            return False
+
+        # Set up a premium account for the user
+        user.is_premium = True
+
+        try:
+            # Save changes to the database
+            await self.db.update(user)
+
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error of changing user's status.",
+            )
+
+        return True
+
 
 def get_user_service() -> UserService:
     return UserService(
@@ -576,3 +609,5 @@ def get_user_service() -> UserService:
         secret_key=config.secret_key,
         algorithm="HS256",
     )
+
+
