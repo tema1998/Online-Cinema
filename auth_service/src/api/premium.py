@@ -17,10 +17,11 @@ router = APIRouter()
 )
 async def set_premium_status(
     user_service: UserService = Depends(get_user_service),
-    user: SetUserPremiumRequest = Body(..., description="User's ID"),
+    premium_data: SetUserPremiumRequest = Body(..., description="Premium data."),
 ) -> bool:
     """
     Set user's status - premium.
     """
-    result = await user_service.set_premium(user_id=user.user_id)
+    result = await user_service.set_premium(user_id=premium_data.user_id,
+                                            number_of_month=premium_data.number_of_month)
     return result

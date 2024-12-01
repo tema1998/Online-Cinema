@@ -70,7 +70,13 @@ class YookassaService(PaymentService):
 
         if request["event"] == "payment.succeeded":
             # TODO: Call worker.
-            result = await self.auth_service.make_request_to_set_premium(data['user_id'])
+
+            #Set premium for user in Auth service
+            result = await self.auth_service.make_request_to_set_premium(data['user_id'], data['number_of_month'])
+
+            #Save to DB
+            order.status = "Success"
+            await self.db.update(order)
 
         elif request["event"] == "payment.canceled":
             pass

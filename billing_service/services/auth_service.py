@@ -14,11 +14,13 @@ class AuthService:
         self.auth_service_get_user_info = config.auth_service_get_user_info
         self.auth_service_set_premium_user = config.auth_service_set_premium_user
 
-    async def make_request_to_set_premium(self, user_id: uuid):
+    async def make_request_to_set_premium(self, user_id: uuid, number_of_month: int):
         # Request parameters
-        body = {"user_id": str(user_id)}
+        body = {"user_id": str(user_id),
+                "number_of_month": number_of_month}
 
         try:
+
             # Make async request to Auth-service
             async with aiohttp.ClientSession() as session:
                 async with session.post(
@@ -27,6 +29,7 @@ class AuthService:
                     headers={"Content-Type": "application/json"},
                 ) as response:
                     response_json = await response.json()
+
         except:
             raise HTTPException(
                 status_code=http.HTTPStatus.BAD_REQUEST,
