@@ -15,7 +15,7 @@ router = APIRouter()
 
 
 @router.post(
-    "/order",
+    "/create",
     response_model=OrderOut,
     summary="Order creation page.",
     status_code=status.HTTP_201_CREATED,
@@ -50,7 +50,7 @@ async def create_order(
     summary="Catch notification from payment service about status of user's payment.",
     status_code=status.HTTP_200_OK,
 )
-async def get_payment_notification(
+async def catch_payment_notification(
     request: Request, payment_service: PaymentService = Depends(get_yookassa_service)
 ):
     json_request = await request.json()

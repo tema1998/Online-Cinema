@@ -20,9 +20,13 @@ class Settings(BaseSettings):
     # Secret key for JWT
     secret_key: str = os.getenv("SECRET_KEY", "secret")
 
-    auth_service_get_user_info_url: str = os.getenv(
-        "AUTH_SERVICE_GET_USER_INFO_URL", "secret"
+    auth_service_url: str = os.getenv("AUTH_SERVICE_URL", "http://auth_service:8081/")
+
+    auth_service_get_user_info: str = os.getenv(
+        "AUTH_SERVICE_GET_USER_INFO_HANDLER", "api/v1/auth/user-info"
     )
+
+    auth_service_set_premium_user: str = os.getenv("AUTH_SERVICE_SET_PREMIUM_HANDLER", "api/v1/premium/set-premium-status")
 
     # Yookassa
     yookassa_shop_id: str = os.getenv("YOOKASSA_SHOP_ID", "shop_id")
@@ -30,6 +34,7 @@ class Settings(BaseSettings):
     yookassa_return_url: str = os.getenv(
         "YOOKASSA_RETURN_URL", "https://yandex-team-number-2.ru"
     )
+
 
     @property
     def dsn(self) -> str:

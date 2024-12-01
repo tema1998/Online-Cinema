@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from typing import Optional, List
 from uuid import UUID, uuid4
 
@@ -26,6 +27,7 @@ from src.schemas.entity import (
 )
 from src.services.async_pg_repository import PostgresAsyncRepository
 from src.services.async_redis_repository import AsyncRedisRepository
+from src.models.entity import PremiumData
 
 
 class UserService:
@@ -227,6 +229,19 @@ class UserService:
 
         return login_history
 
+    async def check_premium_status(self, user_id: UUID) -> bool:
+        """
+        Method for check is user has premium status.
+        :param user_id:
+        :return:
+        """
+        premium = await self.db.fetch_by_query_first(
+            PremiumData, "user_id", user_id
+        )
+        if not premium or premium.valid_until < datetime.now():
+            return False
+        return True
+
     async def login(self, login_data: dict, request: Request) -> TokenResponse:
         # Fetch the user from the database by login
         user: User = await self.db.fetch_by_query_first(
@@ -249,7 +264,7 @@ class UserService:
                 "last_name": user.last_name,
                 "is_superuser": user.is_superuser,
                 "is_active": user.is_active,
-                "is_premium": user.is_premium,
+                "is_premium": await self.check_premium_status(user.id),
             }
         )
         refresh_token = self.create_refresh_token(user.id)
@@ -568,6 +583,40 @@ class UserService:
             "last_name": user.last_name,
         }
 
+    async def set_premium(
+        self, user_id: str, number_of_month: int
+    ) -> bool:
+        """
+        Set user's status - premium.
+        """
+
+        # Fetch the user by ID
+        user = await self.db.fetch_by_query_first(User, "id", user_id)
+
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
+            )
+
+        # Check premium user
+        check_premium = await self.db.fetch_by_query_first(PremiumData, "user_id", user_id)
+
+        if check_premium is True:
+            return False
+
+        premium = PremiumData(user_id=user_id, valid_until=datetime.now()+relativedelta(months=number_of_month))
+        # Set up a premium account for the user
+        try:
+            await self.db.insert(premium)
+
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error of changing user's status.",
+            )
+
+        return True
+
 
 def get_user_service() -> UserService:
     return UserService(
@@ -576,3 +625,5 @@ def get_user_service() -> UserService:
         secret_key=config.secret_key,
         algorithm="HS256",
     )
+
+

@@ -26,6 +26,8 @@ from src.schemas.entity import UserInfoOut
 
 from src.schemas.entity import GetAccessToken
 
+from src.schemas.entity import SetUserPremiumRequest
+
 logging.basicConfig(level=logging.DEBUG)
 
 router = APIRouter()
@@ -303,5 +305,5 @@ async def get_user_info_by_token(
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An error occurred while fetching the login history.",
+            detail="An error occurred while fetching the user's info.",
         )

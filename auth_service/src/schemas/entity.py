@@ -69,6 +69,10 @@ class GetAccessToken(BaseModel):
     access_token: str
 
 
+class SetUserPremiumRequest(BaseModel):
+    user_id: str
+    number_of_month: int
+
 class UserUpdateRequest(BaseModel):
     login: Optional[str] = None
     old_password: Optional[str] = None

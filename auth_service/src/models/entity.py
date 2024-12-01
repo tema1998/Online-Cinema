@@ -53,8 +53,7 @@ class User(Base, UUIDMixin, TimeStampedMixin):
     last_name = Column(String(50))
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
-    is_premium = Column(Boolean, default=False)
-
+    premium = relationship("PremiumData", uselist=False, backref="users")
     roles = relationship("UserRole", back_populates="user")
     login_history = relationship("UserLoginHistory", back_populates="user")
     social_accounts = relationship(
@@ -67,6 +66,12 @@ class User(Base, UUIDMixin, TimeStampedMixin):
             f"first_name='{self.first_name}', last_name='{self.last_name}', "
             f"is_active={self.is_active}, is_superuser={self.is_superuser})>"
         )
+
+class PremiumData(Base, UUIDMixin, TimeStampedMixin):
+    __tablename__ = "premium_data"
+
+    user_id = Column(UUID, ForeignKey('users.id'))
+    valid_until = Column(DateTime, default=datetime.utcnow, nullable=False)
 
 
 class UserSocialAccount(Base, UUIDMixin, TimeStampedMixin):
