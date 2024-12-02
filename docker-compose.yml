@@ -45,8 +45,8 @@ services:
     image: rabbitmq:3-management  # Includes the management plugin for monitoring
     container_name: rabbitmq_billing
     ports:
-      - "5673:${RABBITMQ_NOTIFICATION_CONNECTION_PORT}" # Port for RabbitMQ
-      - "15673:${RABBITMQ_NOTIFICATION_MANAGEMENT_PORT}" # Port for the RabbitMQ Management UI
+      - "5673:${RABBITMQ_BILLING_CONNECTION_PORT}" # Port for RabbitMQ
+      - "15673:${RABBITMQ_BILLING_MANAGEMENT_PORT}" # Port for the RabbitMQ Management UI
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_BILLING_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_BILLING_DEFAULT_PASS}
@@ -74,8 +74,9 @@ services:
     env_file:
       - .env
     depends_on:
-      rabbitmq_billing:
-        condition: service_healthy
+      - rabbitmq_billing_init
+
+
 
   admin_service:
     build:
@@ -187,8 +188,8 @@ services:
     image: rabbitmq:3-management  # Includes the management plugin for monitoring
     container_name: rabbitmq_notification
     ports:
-      - "${RABBITMQ_NOTIFICATION_CONNECTION_PORT}:${RABBITMQ_NOTIFICATION_CONNECTION_PORT}" # Port for RabbitMQ
-      - "${RABBITMQ_NOTIFICATION_MANAGEMENT_PORT}:${RABBITMQ_NOTIFICATION_MANAGEMENT_PORT}" # Port for the RabbitMQ Management UI
+      - "5672:${RABBITMQ_NOTIFICATION_CONNECTION_PORT}" # Port for RabbitMQ
+      - "15672:${RABBITMQ_NOTIFICATION_MANAGEMENT_PORT}" # Port for the RabbitMQ Management UI
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_NOTIFICATION_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_NOTIFICATION_DEFAULT_PASS}
@@ -198,6 +199,16 @@ services:
       retries: 5
     volumes:
       - rabbitmq_notification_data:/var/lib/rabbitmq
+
+  rabbitmq_notification_init:
+    build:
+      context: .
+      dockerfile: ./notification_rabbitmq_init/infra/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      rabbitmq_notification:
+        condition: service_healthy
 
   notification_service:
     build:
@@ -210,8 +221,8 @@ services:
     volumes:
       - ./notification_service:/notification_service
     depends_on:
-      rabbitmq_notification:
-        condition: service_healthy
+      - rabbitmq_notification_init
+    restart: on-failure
 
   notification_consumer_service:
     build:
@@ -224,6 +235,7 @@ services:
       - .env
     volumes:
       - ./consumer_messages:/consumer_messages
+    restart: on-failure
 
   notification_consumer_recorder_service:
     build:
