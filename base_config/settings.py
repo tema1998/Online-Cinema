@@ -49,6 +49,14 @@ class BaseProjectSettings(BaseSettings):
         "scheduled_notification", alias="SCHEDULED_NOTIFICATION_QUEUE"
     )
 
+    payment_success_queue: str = Field(
+        "payment_success_queue", alias="PAYMENT_SUCCESS_QUEUE"
+    )
+
+    payment_failed_queue: str = Field(
+        "payment_failed_queue", alias="PAYMENT_FAILED_QUEUE"
+    )
+
     max_retries_dlq: int = Field(5, alias="MAX_RETRIES_DLQ")
 
     # RabbitMQ Billing connection settings
@@ -79,6 +87,14 @@ class BaseProjectSettings(BaseSettings):
                                                    alias='BILLING_FILM_PURCHASE_SUCCESS_DLQ')
     billing_film_purchase_fail_dlq: str = Field('billing_film_purchase_fail_dlq',
                                                 alias='BILLING_FILM_PURCHASE_FAIL_DLQ')
+
+    notification_successful_payment: str = Field(
+        "http://notification_service:8080/api/v1/payment_success", alias="NOTIFICATION_SUCCESSFUL_PAYMENT"
+    )
+
+    notification_failed_payment: str = Field(
+        "http://notification_service:8080/api/v1/payment_failed", alias="NOTIFICATION_FAILED_PAYMENT"
+    )
 
     @property
     def rabbitmq_connection_url(self) -> str:

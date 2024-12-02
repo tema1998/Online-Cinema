@@ -1,14 +1,15 @@
+import logging
 import uuid
 from uuid import UUID
 
-from pydantic_settings import BaseSettings
-from yookassa import Configuration, Payment
 from core.config import config
 from models.entity import Order
+from pydantic_settings import BaseSettings
 from services.async_pg_repository import PostgresAsyncRepository
 from services.auth_service import AuthService
-from services.payment_service import PaymentService
 from services.message_service import get_publisher_service
+from services.payment_service import PaymentService
+from yookassa import Configuration, Payment
 
 Configuration.account_id = config.yookassa_shop_id
 Configuration.secret_key = config.yookassa_secret_key
@@ -69,23 +70,24 @@ class YookassaService(PaymentService):
             "created_at": order.created_at
         }
 
+        publisher = await get_publisher_service()
         if request["event"] == "payment.succeeded":
             # Calling worker to
             # (i) set premium for user in Auth service;
-            # (ii) save status to Billing DB
+            # (ii) save status 'Success' to Billing DB
             # (iii) send to user notification about successful payment
-
-            publisher = await get_publisher_service()
             await publisher.send_message(data, routing_key=config.billing_premium_subscription_success_queue)
 
 
         elif request["event"] == "payment.canceled":
-            pass
-            # TODO: Call worker
+            # Calling worker to
+            # (i) save status 'Failed' to Billing DB
+            # (iii) send to user notification about failed payment
+            await publisher.send_message(data, routing_key=config.billing_premium_subscription_fail_queue)
 
         else:
-            pass
-            # TODO: Return error.
+            logging.info(f"Unknown event: {request['event']}")
+
 
 
 def get_yookassa_service() -> YookassaService:
