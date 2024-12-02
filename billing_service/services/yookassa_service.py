@@ -8,6 +8,7 @@ from models.entity import Order
 from services.async_pg_repository import PostgresAsyncRepository
 from services.auth_service import AuthService
 from services.payment_service import PaymentService
+from services.message_service import get_publisher_service
 
 Configuration.account_id = config.yookassa_shop_id
 Configuration.secret_key = config.yookassa_secret_key
@@ -69,16 +70,14 @@ class YookassaService(PaymentService):
         }
 
         if request["event"] == "payment.succeeded":
-            # TODO: Call worker.
+            # Calling worker to
+            # (i) set premium for user in Auth service;
+            # (ii) save status to Billing DB
+            # (iii) send to user notification about successful payment
 
-            # TODO: Remove
-            #Set premium for user in Auth service
-            result = await self.auth_service.make_request_to_set_premium(data['user_id'], data['number_of_month'])
+            publisher = await get_publisher_service()
+            await publisher.send_message(data, routing_key=config.billing_premium_subscription_success_queue)
 
-            # TODO: Remove
-            #Save to DB
-            order.status = "Success"
-            await self.db.update(order)
 
         elif request["event"] == "payment.canceled":
             pass

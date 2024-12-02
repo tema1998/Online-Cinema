@@ -1,0 +1,13 @@
+# TCP listener configuration
+listeners.tcp.default = ${RABBITMQ_BILLING_CONNECTION_PORT}
+
+# Management plugin configuration
+management.listener.port = ${RABBITMQ_BILLING_MANAGEMENT_PORT}
+management.listener.ip   = 0.0.0.0
+
+# Log file configuration
+log.console = true
+log.console.level = info
+
+# Disk alarm threshold
+disk_free_limit.absolute = 1GB

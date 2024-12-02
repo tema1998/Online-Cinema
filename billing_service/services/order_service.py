@@ -1,4 +1,5 @@
 from fastapi import HTTPException, status
+from uuid import uuid4
 
 from core.config import config
 from models.entity import Order, Premium
@@ -63,6 +64,22 @@ class OrderService:
         # Set payment_id and payment_url from payment service.
         order.payment_id = payment_id
         order.payment_url = payment_url
+
+        # Update order in DB.
+        updated_order = await self.db.update(order)
+
+        return updated_order
+
+    async  def update_order_status(self, order_id: str, status: str) -> Order:
+        """
+        Method for updating status of order.
+        :param order_id:
+        :param status:
+        :return:
+        """
+        order: Order = await self.db.fetch_by_id(Order, order_id)
+        # Set new status of order.
+        order.status = status
 
         # Update order in DB.
         updated_order = await self.db.update(order)
