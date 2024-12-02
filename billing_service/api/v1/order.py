@@ -8,6 +8,7 @@ from services.payment_service import PaymentService
 from services.token_service import get_user_info
 from services.order_service import OrderService, get_order_service
 from services.yookassa_service import get_yookassa_service
+from services.async_pg_repository import PostgresAsyncRepository
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -55,3 +56,19 @@ async def catch_payment_notification(
 ):
     json_request = await request.json()
     result = await payment_service.process_payment(json_request)
+
+@router.post(
+    "/change-status",
+    summary="Changes the order status.",
+    status_code=status.HTTP_200_OK,
+)
+async def order_status_change(
+    request: Request,
+    order_service: OrderService = Depends(get_order_service),
+):
+    print(Request)
+    json_request = await request.json()
+    print(json_request)
+    order_id = json_request["order_id"]
+    order_status = json_request["order_status"]
+    await order_service.update_order_status(order_id, order_status)

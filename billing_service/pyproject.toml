@@ -23,6 +23,7 @@ sqlalchemy-utils = "^0.41.2"
 requests = "^2.32.3"
 yookassa = "^3.4.1"
 aiohttp = "^3.11.7"
+aio-pika = "^9.5.1"
 
 
 [build-system]
