@@ -1,13 +1,11 @@
-import asyncio
-import logging
-
 import aio_pika
+from tenacity import retry, stop_after_attempt, wait_fixed
 
-from notification_service.config.settings import settings
+from notification_rabbitmq_init.config.settings import settings
 
 
-# TODO x-retry-count
-async def initialize_rabbitmq():
+@retry(stop=stop_after_attempt(10), wait=wait_fixed(0.1))
+async def rabbitmq_init():
     connection = await aio_pika.connect_robust(settings.rabbitmq_connection_url)
     async with connection:
         channel = await connection.channel()
@@ -69,8 +67,3 @@ async def initialize_rabbitmq():
             exchange=settings.dlx_exchange,
             routing_key=settings.instant_notification_dlq,
         )
-
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    asyncio.run(initialize_rabbitmq())

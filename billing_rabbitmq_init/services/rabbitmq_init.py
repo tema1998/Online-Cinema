@@ -1,9 +1,10 @@
-
 import aio_pika
+from tenacity import retry, stop_after_attempt, wait_fixed
 
 from billing_rabbitmq_init.config.settings import settings
 
 
+@retry(stop=stop_after_attempt(10), wait=wait_fixed(0.1))
 async def rabbitmq_init():
     connection = await aio_pika.connect_robust(settings.rabbitmq_billing_connection_url)
     async with connection:
