@@ -248,6 +248,7 @@ services:
       - .env
     volumes:
       - ./notification_consumer_recorder_service:/notification_consumer_recorder_service
+    restart: on-failure
 
 
   elasticsearch:

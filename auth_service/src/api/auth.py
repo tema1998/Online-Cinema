@@ -1,4 +1,5 @@
 import logging
+from uuid import UUID
 
 from authlib.integrations.starlette_client import OAuth
 from fastapi import APIRouter, Depends, Body, status, HTTPException, Request
@@ -273,9 +274,14 @@ async def get_user_info(
 
     # Extract the user ID from the access token
     user_info = await user_service.get_user_info(user_id=user.user_id)
+    # Convert UUIDs to strings to ensure JSON serialization compatibility
+    user_info_serializable = {
+        key: str(value) if isinstance(value, UUID) else value
+        for key, value in user_info.items()
+    }
 
     # Return a success response
-    return JSONResponse(status_code=status.HTTP_200_OK, content=user_info)
+    return JSONResponse(status_code=status.HTTP_200_OK, content=user_info_serializable)
 
 
 @router.post(

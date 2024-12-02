@@ -60,8 +60,27 @@ async def rabbitmq_init():
             },
         )
 
+        payment_success_queue = await channel.declare_queue(
+            settings.payment_success_queue,
+            durable=True,
+            arguments={
+                "x-dead-letter-exchange": settings.dlx_exchange,
+                "x-dead-letter-routing-key": settings.instant_notification_dlq,
+            },
+        )
+
+        payment_failed_queue = await channel.declare_queue(
+            settings.payment_failed_queue,
+            durable=True,
+            arguments={
+                "x-dead-letter-exchange": settings.dlx_exchange,
+                "x-dead-letter-routing-key": settings.instant_notification_dlq,
+            },
+        )
+
         await instant_message_dlq.bind(
-            exchange=settings.dlx_exchange, routing_key=settings.instant_message_dlq
+            exchange=settings.dlx_exchange,
+            routing_key=settings.instant_message_dlq
         )
         await instant_notification_dlq.bind(
             exchange=settings.dlx_exchange,

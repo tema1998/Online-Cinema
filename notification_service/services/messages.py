@@ -1,11 +1,11 @@
 import json
-
 from functools import lru_cache
 
+import orjson
 from fastapi import Depends
+
 from notification_service.schemas.messages import (
     InstantMessageRequest,
-    NotificationAboutNewComment,
 )
 from notification_service.services.broker_service import RabbitMQService
 
@@ -66,6 +66,41 @@ class MessageService:
                     "message_data": message_data,
                 }
             )
+            return await self.broker_service.publish(message_body, queue_name)
+
+        except Exception as e:
+            raise MessageSendException("Failed to send message to broker: %s" % str(e))
+
+    async def send_notification_about_successful_payment(
+        self, email, message_data: dict, message_transfer, queue_name
+    ):
+        try:
+            message_body = orjson.dumps(
+                {
+                    "email": email,
+                    "message_transfer": message_transfer,
+                    "message_type": "successful_payment",
+                    "message_data": message_data,
+                }
+            ).decode("utf-8")
+            return await self.broker_service.publish(message_body, queue_name)
+
+        except Exception as e:
+            raise MessageSendException("Failed to send message to broker: %s" % str(e))
+
+
+    async def send_notification_about_failed_payment(
+        self, email, message_data: dict, message_transfer, queue_name
+    ):
+        try:
+            message_body = orjson.dumps(
+                {
+                    "email": email,
+                    "message_transfer": message_transfer,
+                    "message_type": "failed_payment",
+                    "message_data": message_data,
+                }
+            ).decode("utf-8")
             return await self.broker_service.publish(message_body, queue_name)
 
         except Exception as e:

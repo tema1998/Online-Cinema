@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, EmailStr, AnyUrl
 
 
@@ -27,3 +29,11 @@ class PeriodicTaskParamsRequest(BaseModel):
 
 class PeriodicTaskIdRequest(BaseModel):
     task_id: str
+
+
+class PaymentInfo(BaseModel):
+    order_id: str
+    user_id: str
+    email: EmailStr
+    number_of_month: int
+    created_at: datetime
