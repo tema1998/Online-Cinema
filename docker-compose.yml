@@ -254,11 +254,11 @@ services:
   elasticsearch:
     image: elasticsearch:8.16.1
     container_name: elasticsearch
-    healthcheck:
-      test: curl -s http://elasticsearch:9200 >/dev/null || exit 1
-      interval: 20s
-      timeout: 10s
-      retries: 10
+#    healthcheck:
+#      test: curl -s http://elasticsearch:9200 >/dev/null || exit 1
+#      interval: 20s
+#      timeout: 10s
+#      retries: 10
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
@@ -281,8 +281,8 @@ services:
     depends_on:
       db_content:
         condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
+#      elasticsearch:
+#        condition: service_healthy
     container_name: content_etl
     restart: on-failure
 
