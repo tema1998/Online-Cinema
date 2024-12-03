@@ -110,10 +110,7 @@ class YookassaService(PaymentService):
         }
 
         if request["event"] == "payment.succeeded":
-            print('---------------------')
-            print(data)
-            print('---------------------')
-
+            pass
             # TODO: Call worker
 
         elif request["event"] == "payment.canceled":

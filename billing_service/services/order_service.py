@@ -112,14 +112,14 @@ class OrderService:
 
         return updated_order
 
-    async  def update_order_status(self, order_id: str, status: str) -> Order:
+    async def update_order_premium_status(self, order_id: str, status: str) -> OrderPurchasePremium:
         """
         Method for updating status of order.
         :param order_id:
         :param status:
         :return:
         """
-        order: Order = await self.db.fetch_by_id(Order, order_id)
+        order: OrderPurchasePremium = await self.db.fetch_by_id(OrderPurchasePremium, order_id)
         # Set new status of order.
         order.status = status
 
@@ -128,6 +128,22 @@ class OrderService:
 
         return updated_order
 
+
+    async def update_order_film_status(self, order_id: str, status: str) -> OrderPurchaseFilm:
+        """
+        Method for updating status of order.
+        :param order_id:
+        :param status:
+        :return:
+        """
+        order: OrderPurchaseFilm = await self.db.fetch_by_id(OrderPurchaseFilm, order_id)
+        # Set new status of order.
+        order.status = status
+
+        # Update order in DB.
+        updated_order = await self.db.update(order)
+
+        return updated_order
 
 def get_order_service() -> OrderService:
     return OrderService(
