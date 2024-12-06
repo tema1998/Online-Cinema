@@ -1,7 +1,15 @@
 # Проектная работа: диплом
 
-У вас будет один репозиторий на все 4 недели работы над дипломным проектом. 
+### Project URL
+https://github.com/tema1998/graduate_work
 
-Если вы выбрали работу в командах, ревью будет организовано как в командных модулях с той лишь разницей, что формируете состав команды и назначаете тимлида вы сами, а не команда сопровождения.
+### Team:
+[Артем](https://github.com/tema1998) <br/> 
+[Николай](https://github.com/NikolaySolop)
 
-Удачи!
+### Scheme
+<image src="readme/scheme.png" alt="Scheme">
+
+### Environment
+Create .env file using .env.example. Set your parameters.
+
