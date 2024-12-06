@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel, EmailStr, AnyUrl
 
@@ -32,8 +33,10 @@ class PeriodicTaskIdRequest(BaseModel):
 
 
 class PaymentInfo(BaseModel):
+    order_type: str
     order_id: str
+    film_id: str
     user_id: str
     email: EmailStr
-    number_of_month: int
+    number_of_month: Optional[int]
     created_at: datetime

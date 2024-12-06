@@ -17,7 +17,6 @@ class OrderPremium(OrderPremiumIn):
 
 
 class OrderPremiumOut(OrderPremium):
-    id: UUID
     created_at: datetime
     payment_url: str
 
@@ -36,6 +35,5 @@ class OrderFilm(OrderFilmIn):
 
 
 class OrderFilmOut(OrderFilm):
-    id: UUID
     created_at: datetime
     payment_url: str

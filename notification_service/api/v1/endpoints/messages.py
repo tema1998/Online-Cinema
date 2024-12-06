@@ -37,7 +37,7 @@ async def create_instant_message(
 
 
 # Endpoint for sending a welcome message
-@router.post("/welcome_message/")
+@router.post("/welcome_message")
 async def create_welcome_message(
         message: WelcomeMessageRequest,
         message_service: MessageService = Depends(get_message_service),
@@ -92,38 +92,40 @@ async def create_notification(
         raise HTTPException(status_code=500, detail=str(exception))
 
 
-@router.post("/payment_success/")
+@router.post("/payment_success")
 async def payment_success_notification(
         message: PaymentInfo,
         message_service: MessageService = Depends(get_message_service),
 ):
-    try:
-        url = settings.get_user_info_url
-        body = {"user_id": message.user_id}
+    # try:
+    url = settings.get_user_info_url
+    body = {"user_id": message.user_id}
 
-        response = requests.post(
-            url, json=body, headers={"X-Request-Id": "RandomRequestId"}
-        )
+    response = requests.post(
+        url, json=body, headers={"X-Request-Id": "RandomRequestId"}
+    )
 
-        user_email = response.json().get("email")
-        first_name = response.json().get("first_name")
-        last_name = response.json().get("last_name")
+    order_type = message.order_type
+    user_email = response.json().get("email")
+    first_name = response.json().get("first_name")
+    last_name = response.json().get("last_name")
 
-        message_data = message.dict()
-        message_data.update({"first_name": first_name, "last_name": last_name})
+    message_data = message.dict()
+    message_data.update({"first_name": first_name, "last_name": last_name})
 
-        result = await message_service.send_notification_about_successful_payment(
-            user_email,
-            message_data,
-            "email",
-            settings.payment_success_queue,
-        )
-        return result
-    except MessageSendException as exception:
-        raise HTTPException(status_code=500, detail=str(exception))
+    result = await message_service.send_notification_about_successful_payment(
+        order_type,
+        user_email,
+        message_data,
+        "email",
+        settings.payment_success_queue,
+    )
+    return result
+    # except MessageSendException as exception:
+    #     raise HTTPException(status_code=500, detail=str(exception))
 
-@router.post("/payment_failed/")
-async def payment_success_notification(
+@router.post("/payment_failed")
+async def payment_failed_notification(
         message: PaymentInfo,
         message_service: MessageService = Depends(get_message_service),
 ):

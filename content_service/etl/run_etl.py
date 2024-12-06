@@ -60,14 +60,9 @@ def run_etl_indefinitely():
 
     # Run the ETL processes indefinitely
     while True:
-        print("Running ETL...")
-        # try:
         etl_movies.run_etl()
         etl_genres.run_etl()
         etl_persons.run_etl()
-        # except Exception as e:
-        #     print(f"An error occurred: {e}")
-        print("ETL completed.")
         time.sleep(configs.run_etl_every_seconds)
 
 

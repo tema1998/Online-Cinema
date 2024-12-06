@@ -108,6 +108,7 @@ async def order_status_change(
 ):
     json_request = await request.json()
 
+    order_type = json_request["order_type"]
     order_id = json_request["order_id"]
     order_status = json_request["order_status"]
-    await order_service.update_order_premium_status(order_id, order_status)
+    await order_service.update_order_status(order_type, order_id, order_status)

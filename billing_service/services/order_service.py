@@ -112,16 +112,26 @@ class OrderService:
 
         return updated_order
 
-    async def update_order_premium_status(self, order_id: str, status: str) -> OrderPurchasePremium:
+    async def update_order_status(self, order_type: str, order_id: str, order_status: str) -> OrderPurchasePremium | OrderPurchaseFilm:
         """
         Method for updating status of order.
+        :param order_status:
+        :param order_type:
         :param order_id:
-        :param status:
         :return:
         """
-        order: OrderPurchasePremium = await self.db.fetch_by_id(OrderPurchasePremium, order_id)
+        if order_type == "premium":
+            order = await self.db.fetch_by_id(OrderPurchasePremium, order_id)
+        elif order_type == "film":
+            order = await self.db.fetch_by_id(OrderPurchaseFilm, order_id)
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Unknown order type.",
+            )
+
         # Set new status of order.
-        order.status = status
+        order.status = order_status
 
         # Update order in DB.
         updated_order = await self.db.update(order)
@@ -129,21 +139,6 @@ class OrderService:
         return updated_order
 
 
-    async def update_order_film_status(self, order_id: str, status: str) -> OrderPurchaseFilm:
-        """
-        Method for updating status of order.
-        :param order_id:
-        :param status:
-        :return:
-        """
-        order: OrderPurchaseFilm = await self.db.fetch_by_id(OrderPurchaseFilm, order_id)
-        # Set new status of order.
-        order.status = status
-
-        # Update order in DB.
-        updated_order = await self.db.update(order)
-
-        return updated_order
 
 def get_order_service() -> OrderService:
     return OrderService(

@@ -65,6 +65,7 @@ class YookassaService(PaymentService):
         )
 
         data = {
+            "order_type": "premium",
             "order_id": order.id,
             "user_id": order.user_id,
             "email": order.user_email,
@@ -102,24 +103,31 @@ class YookassaService(PaymentService):
         )
 
         data = {
-            "order_id": order.id,
-            "film_id": order.film_id,
+            "order_type": "film",
+            "order_id": str(order.id),
+            "film_id": f"...{str(order.film_id)[-4:]}",
+            "number_of_month": 0,
             "user_id": order.user_id,
             "email": order.user_email,
             "created_at": order.created_at
         }
 
+        publisher = await get_publisher_service()
         if request["event"] == "payment.succeeded":
-            pass
-            # TODO: Call worker
+            # Calling worker to
+            # (i) save status 'Success' to Billing DB
+            # (ii) send to user notification about successful payment
+            await publisher.send_message(data, routing_key=config.billing_film_purchase_success_queue)
 
         elif request["event"] == "payment.canceled":
-            pass
-            # TODO: Call worker
+            # Calling worker to
+            # (i) save status 'Failed' to Billing DB
+            # (ii) send to user notification about failed payment
+            await publisher.send_message(data, routing_key=config.billing_film_purchase_fail_queue)
 
         else:
-            pass
-            # TODO: Return error.
+            logging.info(f"Unknown event: {request['event']}")
+
 
 def get_yookassa_service() -> YookassaService:
     return YookassaService(config=config, db=PostgresAsyncRepository(dsn=config.dsn))

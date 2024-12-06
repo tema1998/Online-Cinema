@@ -17,7 +17,6 @@ class MessageSender:
         self.exchange_type = exchange_type
 
     async def send_message(self, message: str, routing_key: str):
-        print(message)
 
         def convert_uuid(obj):
             if isinstance(obj, dict):
