@@ -14,7 +14,6 @@ env = Environment(loader=FileSystemLoader("templates"))
 
 def get_template(message_type, message_transfer):
     try:
-        # TODO path
         template_path = f"{message_transfer}/{message_type}.html"
         template = env.get_template(template_path)
         return template
