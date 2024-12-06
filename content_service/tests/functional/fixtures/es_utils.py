@@ -46,6 +46,7 @@ def es_write_data(es_client):
         )
 
         if errors:
-            raise Exception(f"Error of data adding to {index_name} index of ES.")
+            raise Exception(
+                f"Error of data adding to {index_name} index of ES.")
 
     return inner

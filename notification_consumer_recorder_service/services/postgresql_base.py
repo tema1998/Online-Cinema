@@ -16,7 +16,8 @@ class BaseService(Generic[T]):
 
     async def create(self, **kwargs: Dict[str, Any]) -> T:
         """Create a new record with the provided fields as keyword arguments."""
-        new_instance = self.model(**kwargs)  # Instantiate model with keyword arguments
+        new_instance = self.model(
+            **kwargs)  # Instantiate model with keyword arguments
         try:
             self.db_session.add(new_instance)
             await self.db_session.commit()
@@ -42,7 +43,8 @@ class BaseService(Generic[T]):
         """Update a record by ID with provided data."""
         try:
             await self.db_session.execute(
-                update(self.model).where(self.model.id == id).values(**update_data)
+                update(self.model).where(
+                    self.model.id == id).values(**update_data)
             )
             await self.db_session.commit()
             return await self.get(id)

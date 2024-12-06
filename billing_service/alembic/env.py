@@ -1,3 +1,4 @@
+from models.entity import Base
 import os
 from logging.config import fileConfig
 
@@ -24,7 +25,6 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-from models.entity import Base
 
 target_metadata = Base.metadata
 
@@ -72,7 +72,8 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+        context.configure(connection=connection,
+                          target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

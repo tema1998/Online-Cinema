@@ -67,6 +67,7 @@ class User(Base, UUIDMixin, TimeStampedMixin):
             f"is_active={self.is_active}, is_superuser={self.is_superuser})>"
         )
 
+
 class PremiumData(Base, UUIDMixin, TimeStampedMixin):
     __tablename__ = "premium_data"
 
@@ -158,11 +159,13 @@ class UserLoginHistory(Base):
     id = Column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False
     )
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey(
+        "users.id"), nullable=False)
     login_time = Column(DateTime, default=datetime.utcnow, nullable=False)
     user_agent = Column(String(255))
     ip_address = Column(String(45))
-    user_device_type = Column(Text, nullable=True)  # Partition key, not primary key
+    # Partition key, not primary key
+    user_device_type = Column(Text, nullable=True)
 
     # Relationship with the User model
     user = relationship("User", back_populates="login_history")

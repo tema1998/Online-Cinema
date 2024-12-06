@@ -30,7 +30,8 @@ class PostgresAsyncRepository:
         self, model_class: Type[Base], column: str, value: Any
     ) -> Optional[List[Any]]:
         async with self.async_session() as session:
-            stmt = select(model_class).where(getattr(model_class, column) == value)
+            stmt = select(model_class).where(
+                getattr(model_class, column) == value)
             result = await session.execute(stmt)
             return result.scalars().all()
 
@@ -76,7 +77,8 @@ class PostgresAsyncRepository:
         self, model_class: Type[Base], column: str, value: Any
     ) -> Optional[Any]:
         async with self.async_session() as session:
-            stmt = select(model_class).where(getattr(model_class, column) == value)
+            stmt = select(model_class).where(
+                getattr(model_class, column) == value)
             result = await session.execute(stmt)
             return result.scalars().first()
 
@@ -84,7 +86,8 @@ class PostgresAsyncRepository:
         self, model_class: Type[Base], column: str, value: Any
     ) -> int:
         async with self.async_session() as session:
-            stmt = select(func.count()).where(getattr(model_class, column) == value)
+            stmt = select(func.count()).where(
+                getattr(model_class, column) == value)
             result = await session.execute(stmt)
             return result.scalar()
 
@@ -119,7 +122,8 @@ class PostgresAsyncRepository:
     async def update(self, obj: Base) -> Any:
         async with self.async_session() as session:
             # Convert the SQLAlchemy ORM object to a dictionary of its fields
-            obj_dict = {c.name: getattr(obj, c.name) for c in obj.__table__.columns}
+            obj_dict = {c.name: getattr(obj, c.name)
+                        for c in obj.__table__.columns}
 
             stmt = (
                 update(obj.__class__)

@@ -33,13 +33,16 @@ class DataExtractor:
         ) as conn, conn.cursor() as cursor:
 
             if self.table_name == "film_work":
-                cursor.execute(generate_filmwork_query(last_modified, self.batch_size))
+                cursor.execute(generate_filmwork_query(
+                    last_modified, self.batch_size))
 
             elif self.table_name == "person":
-                cursor.execute(generate_person_query(last_modified, self.batch_size))
+                cursor.execute(generate_person_query(
+                    last_modified, self.batch_size))
 
             elif self.table_name == "genre":
-                cursor.execute(generate_genre_query(last_modified, self.batch_size))
+                cursor.execute(generate_genre_query(
+                    last_modified, self.batch_size))
 
             executed_data = cursor.fetchall()
             size_of_current_batch = len(executed_data)

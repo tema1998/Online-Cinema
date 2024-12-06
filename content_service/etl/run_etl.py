@@ -44,7 +44,8 @@ def run_etl_indefinitely():
     )
 
     # Instantiate the components for persons
-    index_manager_persons = IndexManager(configs.es_url, "persons", person_index)
+    index_manager_persons = IndexManager(
+        configs.es_url, "persons", person_index)
     extractor_persons = DataExtractor("person", configs.dsn, configs.batch)
     transformer_persons = DataTransformer()
     loader_persons = DataLoader(configs.es_url, "persons")
@@ -60,14 +61,9 @@ def run_etl_indefinitely():
 
     # Run the ETL processes indefinitely
     while True:
-        print("Running ETL...")
-        # try:
         etl_movies.run_etl()
         etl_genres.run_etl()
         etl_persons.run_etl()
-        # except Exception as e:
-        #     print(f"An error occurred: {e}")
-        print("ETL completed.")
         time.sleep(configs.run_etl_every_seconds)
 
 

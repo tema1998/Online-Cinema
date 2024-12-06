@@ -6,7 +6,8 @@ from sqlalchemy.orm import sessionmaker
 from src.core.config import config
 
 # Create an asynchronous engine using the configuration DSN
-engine = create_async_engine(config.dsn, echo=config.sqlalchemy_echo, future=True)
+engine = create_async_engine(
+    config.dsn, echo=config.sqlalchemy_echo, future=True)
 
 # Create an asynchronous session factory
 async_session_factory = sessionmaker(

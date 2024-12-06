@@ -8,6 +8,7 @@ from fastapi import HTTPException
 
 from core.config import config
 
+
 class AuthService:
     def __init__(self):
         self.auth_service_url = config.auth_service_url
@@ -72,6 +73,7 @@ class AuthService:
             "first_name": response_json.get("first_name"),
             "last_name": response_json.get("last_name"),
         }
+
 
 def get_auth_service():
     return AuthService()

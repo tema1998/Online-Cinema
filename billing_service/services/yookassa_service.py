@@ -3,8 +3,8 @@ import uuid
 from uuid import UUID
 
 from core.config import config
-from models.entity import Order
 from pydantic_settings import BaseSettings
+from models.entity import OrderPurchasePremium, OrderPurchaseFilm
 from services.async_pg_repository import PostgresAsyncRepository
 from services.auth_service import AuthService
 from services.message_service import get_publisher_service
@@ -24,10 +24,11 @@ class YookassaService(PaymentService):
         Configuration.secret_key = self.config.yookassa_secret_key
 
     def create_payment(
-        self, order_id: UUID, total_price: float, customer_email: str
+        self, order_id: UUID, total_price: float, customer_email: str, order_type: str
     ) -> tuple:
         """
         Method for creating payment in Yookassa service.
+        :param order_type:
         :param order_id:
         :param total_price:
         :param customer_email:
@@ -45,13 +46,14 @@ class YookassaService(PaymentService):
                 },
                 "capture": True,
                 "description": f"Order #{order_id}",
-                "metadata": {"orderID": f"{order_id}"},
+                "metadata": {"orderID": f"{order_id}",
+                             "order_type": order_type},
             },
             key,
         )
         return payment.id, payment.confirmation.confirmation_url
 
-    async def process_payment(self, request: dict):
+    async def process_premium_order_payment(self, request: dict):
         """
         Method for processing of response from Yookassa service
         :param request:
@@ -59,10 +61,11 @@ class YookassaService(PaymentService):
         """
 
         order = await self.db.fetch_by_query_first(
-            Order, "payment_id", request["object"]["id"]
+            OrderPurchasePremium, "payment_id", request["object"]["id"]
         )
 
         data = {
+            "order_type": "premium",
             "order_id": order.id,
             "user_id": order.user_id,
             "email": order.user_email,
@@ -78,7 +81,6 @@ class YookassaService(PaymentService):
             # (iii) send to user notification about successful payment
             await publisher.send_message(data, routing_key=config.billing_premium_subscription_success_queue)
 
-
         elif request["event"] == "payment.canceled":
             # Calling worker to
             # (i) save status 'Failed' to Billing DB
@@ -88,6 +90,42 @@ class YookassaService(PaymentService):
         else:
             logging.info(f"Unknown event: {request['event']}")
 
+    async def process_film_order_payment(self, request: dict):
+        """
+        Method for processing of response from Yookassa service
+        :param request:
+        :return:
+        """
+
+        order = await self.db.fetch_by_query_first(
+            OrderPurchaseFilm, "payment_id", request["object"]["id"]
+        )
+
+        data = {
+            "order_type": "film",
+            "order_id": str(order.id),
+            "film_id": f"...{str(order.film_id)[-4:]}",
+            "number_of_month": 0,
+            "user_id": order.user_id,
+            "email": order.user_email,
+            "created_at": order.created_at
+        }
+
+        publisher = await get_publisher_service()
+        if request["event"] == "payment.succeeded":
+            # Calling worker to
+            # (i) save status 'Success' to Billing DB
+            # (ii) send to user notification about successful payment
+            await publisher.send_message(data, routing_key=config.billing_film_purchase_success_queue)
+
+        elif request["event"] == "payment.canceled":
+            # Calling worker to
+            # (i) save status 'Failed' to Billing DB
+            # (ii) send to user notification about failed payment
+            await publisher.send_message(data, routing_key=config.billing_film_purchase_fail_queue)
+
+        else:
+            logging.info(f"Unknown event: {request['event']}")
 
 
 def get_yookassa_service() -> YookassaService:

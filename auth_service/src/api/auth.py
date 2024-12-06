@@ -97,7 +97,8 @@ async def refresh_user_token(
     status_code=status.HTTP_200_OK,
 )
 async def logout_user(
-    logout_request: LogoutRequest = Body(..., description="User's refresh token"),
+    logout_request: LogoutRequest = Body(...,
+                                         description="User's refresh token"),
     access_token: str = Depends(OAuth2PasswordBearer(tokenUrl="token")),
     user_service: UserService = Depends(get_user_service),
 ) -> JSONResponse:
@@ -174,7 +175,8 @@ async def get_user_login_history(
             user_id, pagination
         )
 
-        total_pages = (total_count + pagination.page_size - 1) // pagination.page_size
+        total_pages = (total_count + pagination.page_size -
+                       1) // pagination.page_size
 
         return PaginatedResponse(
             count=len(login_history),

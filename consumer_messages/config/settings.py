@@ -13,7 +13,8 @@ class Settings(BaseProjectSettings):
     # PostgreSQL settings
     postgres_host: str = Field("127.0.0.1", alias="POSTGRES_HOST")
     postgres_user: str = Field("practix_user", alias="POSTGRES_USER")
-    postgres_password: str = Field("practix_password", alias="POSTGRES_PASSWORD")
+    postgres_password: str = Field(
+        "practix_password", alias="POSTGRES_PASSWORD")
     postgres_db: str = Field("notification_db", alias="POSTGRES_DB")
     postgres_port: int = Field(5432, alias="POSTRGES_PORT")
 

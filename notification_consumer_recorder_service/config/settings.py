@@ -12,7 +12,8 @@ class Settings(BaseProjectSettings):
     # PostgreSQL settings
     postgres_host: str = Field("127.0.0.1", alias="NOTIFICATION_DB_HOST")
     postgres_user: str = Field("practix_user", alias="NOTIFICATION_DB_USER")
-    postgres_password: str = Field("practix_password", alias="NOTIFICATION_DB_PASSWORD")
+    postgres_password: str = Field(
+        "practix_password", alias="NOTIFICATION_DB_PASSWORD")
     postgres_db: str = Field("notification_db", alias="NOTIFICATION_DB")
     postgres_port: int = Field(5432, alias="NOTIFICATION_DB_PORT")
 

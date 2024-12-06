@@ -18,11 +18,13 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "created",
-                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="created"),
                 ),
                 (
                     "modified",
-                    models.DateTimeField(auto_now=True, verbose_name="created"),
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="created"),
                 ),
                 (
                     "id",
@@ -36,7 +38,8 @@ class Migration(migrations.Migration):
                 ("title", models.CharField(max_length=255, verbose_name="title")),
                 (
                     "description",
-                    models.TextField(blank=True, null=True, verbose_name="description"),
+                    models.TextField(blank=True, null=True,
+                                     verbose_name="description"),
                 ),
                 (
                     "creation_date",
@@ -91,11 +94,13 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "created",
-                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="created"),
                 ),
                 (
                     "modified",
-                    models.DateTimeField(auto_now=True, verbose_name="created"),
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="created"),
                 ),
                 (
                     "id",
@@ -109,7 +114,8 @@ class Migration(migrations.Migration):
                 ("name", models.CharField(max_length=255, verbose_name="name")),
                 (
                     "description",
-                    models.TextField(blank=True, null=True, verbose_name="description"),
+                    models.TextField(blank=True, null=True,
+                                     verbose_name="description"),
                 ),
             ],
             options={
@@ -124,7 +130,8 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "created",
-                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="created"),
                 ),
                 (
                     "id",
@@ -171,11 +178,13 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "created",
-                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="created"),
                 ),
                 (
                     "modified",
-                    models.DateTimeField(auto_now=True, verbose_name="created"),
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="created"),
                 ),
                 (
                     "id",
@@ -196,7 +205,8 @@ class Migration(migrations.Migration):
                 "verbose_name_plural": "persons",
                 "db_table": "person",
                 "indexes": [
-                    models.Index(fields=["full_name"], name="person_full_name_idx")
+                    models.Index(fields=["full_name"],
+                                 name="person_full_name_idx")
                 ],
             },
         ),
@@ -205,7 +215,8 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "created",
-                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="created"),
                 ),
                 (
                     "id",

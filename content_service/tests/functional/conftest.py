@@ -28,7 +28,8 @@ async def es_client():
     Fixture for getting ES client.
     :return:
     """
-    es_client = AsyncElasticsearch(hosts=test_settings.es_url(), verify_certs=False)
+    es_client = AsyncElasticsearch(
+        hosts=test_settings.es_url(), verify_certs=False)
     yield es_client
     await es_client.close()
 

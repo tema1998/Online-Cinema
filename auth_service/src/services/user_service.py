@@ -65,7 +65,8 @@ class UserService:
         await self.check_blacklist(token)
 
         try:
-            payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
+            payload = jwt.decode(token, self.secret_key,
+                                 algorithms=[self.algorithm])
             user_id = payload.get("sub")
             if user_id is None:
                 raise HTTPException(
@@ -148,7 +149,8 @@ class UserService:
         """
         try:
             # Use email as login or generate a dummy login if email is not available
-            user_data["login"] = user_data.get("email", f"{provider}_{uuid4()}")
+            user_data["login"] = user_data.get(
+                "email", f"{provider}_{uuid4()}")
 
             # Create a Pydantic model instance to validate the input data
             user = SocialUserRegister(**user_data)  # Validate the user data
@@ -370,7 +372,8 @@ class UserService:
         Calculate the TTL (time-to-live) for the access token based on its expiration time.
         """
         try:
-            payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
+            payload = jwt.decode(token, self.secret_key,
+                                 algorithms=[self.algorithm])
             expiration_time = datetime.fromtimestamp(payload["exp"])
             current_time = datetime.utcnow()
             ttl = (expiration_time - current_time).total_seconds()
@@ -520,7 +523,8 @@ class UserService:
         # Extract provider-specific user ID (e.g., 'sub' for Google)
         provider_user_id = user_info.get("sub")
         if not provider_user_id:
-            raise ValueError(f"User info from {provider} is missing the 'sub' field.")
+            raise ValueError(
+                f"User info from {provider} is missing the 'sub' field.")
 
         # Check if the user already exists by provider user ID
         user = await self.get_user_by_provider_id(provider, provider_user_id)
@@ -604,7 +608,8 @@ class UserService:
         if check_premium is True:
             return False
 
-        premium = PremiumData(user_id=user_id, valid_until=datetime.now()+relativedelta(months=number_of_month))
+        premium = PremiumData(user_id=user_id, valid_until=datetime.now(
+        )+relativedelta(months=number_of_month))
         # Set up a premium account for the user
         try:
             await self.db.insert(premium)
@@ -625,5 +630,3 @@ def get_user_service() -> UserService:
         secret_key=config.secret_key,
         algorithm="HS256",
     )
-
-

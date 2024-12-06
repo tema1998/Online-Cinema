@@ -25,7 +25,8 @@ class MyUserManager(BaseUserManager):
 class User(AbstractBaseUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     login = models.CharField(verbose_name="Login", max_length=255, unique=True)
-    email = models.EmailField(verbose_name="Email", max_length=255, unique=True)
+    email = models.EmailField(verbose_name="Email",
+                              max_length=255, unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     first_name = models.CharField(max_length=255)

@@ -3,6 +3,7 @@ import logging
 
 from tenacity import retry, stop_after_attempt, wait_fixed
 
+from billing_worker.consumers.film_consumer import PurchaseFilmSuccessConsumer, PurchaseFilmFailConsumer
 from billing_worker.consumers.subscription_consumer import SubscriptionSuccessConsumer, SubscriptionFailConsumer
 from billing_worker.dependencies.rabbitmq_connection import pika_lifespan
 
@@ -14,10 +15,13 @@ async def main():
     async with pika_lifespan():
         consumers = [
             SubscriptionSuccessConsumer(),
-            SubscriptionFailConsumer()
+            SubscriptionFailConsumer(),
+            PurchaseFilmSuccessConsumer(),
+            PurchaseFilmFailConsumer()
         ]
 
-        tasks = [asyncio.create_task(consumer.start()) for consumer in consumers]
+        tasks = [asyncio.create_task(consumer.start())
+                 for consumer in consumers]
         await asyncio.gather(*tasks)
 
 

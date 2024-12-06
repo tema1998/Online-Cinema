@@ -30,13 +30,14 @@ class PaymentSuccessConsumer(BaseConsumer):
                 message_transfer = message_data.get("message_transfer")
                 content_data = message_data.get("message_data")
 
+                print('LAST')
+                print(content_data)
                 # Retrieve and render the template
                 template = get_template(message_type, message_transfer)
                 rendered_content = render_template(template, content_data)
 
                 # Send the email
                 await send_email(recipient, rendered_content)
-
 
             except Exception as e:
                 await message.reject(requeue=False)

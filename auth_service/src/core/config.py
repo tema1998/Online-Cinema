@@ -26,7 +26,8 @@ class Settings(BaseSettings):
     pg_host: str = os.getenv("AUTH_DB_HOST", "localhost")
     pg_port: int = os.getenv("AUTH_DB_PORT", 5433)
     pg_db: str = os.getenv("AUTH_DB", "db_auth")
-    pg_engine: str = os.getenv("POSTGRES_ENGINE", "django.db.backends.postgresql")
+    pg_engine: str = os.getenv(
+        "POSTGRES_ENGINE", "django.db.backends.postgresql")
 
     sqlalchemy_echo: bool = os.getenv("SQLALCHEMY_ECHO", False)
 
@@ -45,7 +46,8 @@ class Settings(BaseSettings):
     # Secret key for JWT
     secret_key: str = os.getenv("SECRET_KEY", "practix")
 
-    limit_of_requests_per_minute: int = os.getenv("LIMIT_OF_REQUESTS_PER_MINUTE", 20)
+    limit_of_requests_per_minute: int = os.getenv(
+        "LIMIT_OF_REQUESTS_PER_MINUTE", 20)
 
     # Jaeger Config
     enable_tracer: bool = os.getenv("ENABLE_TRACER", False)
@@ -53,7 +55,8 @@ class Settings(BaseSettings):
     jaeger_port: int = os.getenv("JAEGER_PORT", 6831)
 
     # Middleware settings
-    middleware_secret_key: str = os.getenv("MIDDLEWARE_SECRET", "super-secret-key")
+    middleware_secret_key: str = os.getenv(
+        "MIDDLEWARE_SECRET", "super-secret-key")
 
     @property
     def dsn(self) -> str:

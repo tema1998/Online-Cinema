@@ -66,7 +66,8 @@ class RoleService:
                 status_code=status.HTTP_400_BAD_REQUEST, detail="There is no roles."
             )
 
-        roles_model = RolesInDB(roles=[RoleInDB(**role.to_dict()) for role in roles])
+        roles_model = RolesInDB(
+            roles=[RoleInDB(**role.to_dict()) for role in roles])
 
         return roles_model
 

@@ -30,5 +30,3 @@ async def pika_lifespan():
     await set_pika_connection()
     yield
     await close_pika_connection()
-
-

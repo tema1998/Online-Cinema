@@ -47,7 +47,8 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 AUTH_API_LOGIN_URL = os.environ.get("AUTH_API_LOGIN_URL")
 REDIS_HOST = os.environ.get("REDIS_HOST")
 REDIS_PORT = os.environ.get("REDIS_PORT")
-LIMIT_OF_REQUESTS_PER_MINUTE = int(os.environ.get("ADMIN_LIMIT_OF_REQUESTS_PER_MINUTE"))
+LIMIT_OF_REQUESTS_PER_MINUTE = int(
+    os.environ.get("ADMIN_LIMIT_OF_REQUESTS_PER_MINUTE"))
 
 DEBUG = os.environ.get("DEBUG", False) == "True"
 

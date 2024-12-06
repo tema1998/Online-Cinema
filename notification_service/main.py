@@ -38,7 +38,8 @@ app = FastAPI(
 
 scheduler.start()
 
-origins = ["http://localhost", "http://localhost:8080", "http://127.0.0.1:8080"]
+origins = ["http://localhost",
+           "http://localhost:8080", "http://127.0.0.1:8080"]
 
 # CORS Middleware
 app.add_middleware(
@@ -50,10 +51,12 @@ app.add_middleware(
 )
 
 # Session Middleware
-app.add_middleware(SessionMiddleware, secret_key=settings.middleware_secret_key)
+app.add_middleware(SessionMiddleware,
+                   secret_key=settings.middleware_secret_key)
 
 
-app.include_router(messages_router, prefix="/api/v1", tags=["instant_messages"])
+app.include_router(messages_router, prefix="/api/v1",
+                   tags=["instant_messages"])
 app.include_router(
     periodic_messages_router, prefix="/api/v1", tags=["periodic_messages"]
 )

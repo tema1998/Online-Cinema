@@ -34,7 +34,8 @@ class MessageService:
             return await self.broker_service.publish(message_body, queue_name)
 
         except Exception as e:
-            raise MessageSendException("Failed to send message to broker: %s" % str(e))
+            raise MessageSendException(
+                "Failed to send message to broker: %s" % str(e))
 
     async def send_welcome_message(
         self, user_email, message: dict, message_transfer, queue_name
@@ -51,7 +52,8 @@ class MessageService:
             return await self.broker_service.publish(message_body, queue_name)
 
         except Exception as e:
-            raise MessageSendException("Failed to send message to broker: %s" % str(e))
+            raise MessageSendException(
+                "Failed to send message to broker: %s" % str(e))
 
     async def send_notification_about_new_comment(
         self, review_id, email, message_data: dict, message_transfer, queue_name
@@ -69,42 +71,59 @@ class MessageService:
             return await self.broker_service.publish(message_body, queue_name)
 
         except Exception as e:
-            raise MessageSendException("Failed to send message to broker: %s" % str(e))
+            raise MessageSendException(
+                "Failed to send message to broker: %s" % str(e))
 
     async def send_notification_about_successful_payment(
-        self, email, message_data: dict, message_transfer, queue_name
+        self, order_type: str, email: str, message_data: dict, message_transfer, queue_name
     ):
+        if order_type == "premium":
+            message_type = "successful_premium_payment"
+        elif order_type == "film":
+            message_type = "successful_film_payment"
+        else:
+            raise MessageSendException("Unknown type of order.")
+
         try:
             message_body = orjson.dumps(
                 {
                     "email": email,
                     "message_transfer": message_transfer,
-                    "message_type": "successful_payment",
+                    "message_type": message_type,
                     "message_data": message_data,
                 }
             ).decode("utf-8")
             return await self.broker_service.publish(message_body, queue_name)
 
         except Exception as e:
-            raise MessageSendException("Failed to send message to broker: %s" % str(e))
-
+            raise MessageSendException(
+                "Failed to send message to broker: %s" % str(e))
 
     async def send_notification_about_failed_payment(
-        self, email, message_data: dict, message_transfer, queue_name
+        self, order_type: str, email: str, message_data: dict, message_transfer, queue_name
     ):
+
+        if order_type == "premium":
+            message_type = "successful_premium_payment"
+        elif order_type == "film":
+            message_type = "successful_film_payment"
+        else:
+            raise MessageSendException("Unknown type of order.")
+
         try:
             message_body = orjson.dumps(
                 {
                     "email": email,
                     "message_transfer": message_transfer,
-                    "message_type": "failed_payment",
+                    "message_type": message_type,
                     "message_data": message_data,
                 }
             ).decode("utf-8")
             return await self.broker_service.publish(message_body, queue_name)
 
         except Exception as e:
-            raise MessageSendException("Failed to send message to broker: %s" % str(e))
+            raise MessageSendException(
+                "Failed to send message to broker: %s" % str(e))
 
 
 @lru_cache

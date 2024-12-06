@@ -57,7 +57,8 @@ class FilmService(BaseService):
 
         # Add sorting if provided
         if sort is not None and sort != "-":
-            sort_field = sort[1:] if sort.startswith(("+", "-")) else "imdb_rating"
+            sort_field = sort[1:] if sort.startswith(
+                ("+", "-")) else "imdb_rating"
             sort_order = (
                 sort_dict.get(sort[0], "desc")
                 if sort.startswith(("+", "-"))

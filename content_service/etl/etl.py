@@ -29,6 +29,7 @@ class ETL:
 
         while size_of_current_batch == self.batch_size:
             data = self.extractor.extract()
-            transformed_data = self.transformer.transform(self.index_name, data)
+            transformed_data = self.transformer.transform(
+                self.index_name, data)
             self.loader.load(transformed_data)
             size_of_current_batch = len(data)

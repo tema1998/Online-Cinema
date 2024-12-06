@@ -11,7 +11,8 @@ class Settings(BaseSettings):
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     # Название проекта. Используется в Swagger-документации
-    project_name: str = Field(env="FASTAPI_AUTH_PROJECT_NAME", default="movies")
+    project_name: str = Field(
+        env="FASTAPI_AUTH_PROJECT_NAME", default="movies")
 
     elastic_host: str = Field(env="ES_HOST", default="127.0.0.1")
     elastic_port: int = Field(env="ES_PORT", default=9200)
@@ -22,7 +23,8 @@ class Settings(BaseSettings):
 
     secret_key: str = os.getenv("SECRET_KEY", "practix")
 
-    limit_of_requests_per_minute: int = os.getenv("LIMIT_OF_REQUESTS_PER_MINUTE", 20)
+    limit_of_requests_per_minute: int = os.getenv(
+        "LIMIT_OF_REQUESTS_PER_MINUTE", 20)
 
     def es_url(self):
         return f"{self.elastic_schema}{self.elastic_host}:{self.elastic_port}"

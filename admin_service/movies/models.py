@@ -45,7 +45,8 @@ class Person(UUIDMixin, TimeStampedCreatedMixin, TimeStampedUpdatedMixin):
     full_name = models.CharField(_("full_name"), max_length=255)
 
     class Meta:
-        indexes = [models.Index(fields=["full_name"], name="person_full_name_idx")]
+        indexes = [models.Index(fields=["full_name"],
+                                name="person_full_name_idx")]
         db_table = "person"
         verbose_name = _("person")
         verbose_name_plural = _("persons")
@@ -69,13 +70,17 @@ class Filmwork(UUIDMixin, TimeStampedCreatedMixin, TimeStampedUpdatedMixin):
         null=True,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
     )
-    type = models.CharField(_("type"), choices=TypeOfFilmwork.choices, max_length=7)
-    genres = models.ManyToManyField(Genre, _("genres"), through="GenreFilmwork")
-    person = models.ManyToManyField(Person, _("persons"), through="PersonFilmwork")
+    type = models.CharField(
+        _("type"), choices=TypeOfFilmwork.choices, max_length=7)
+    genres = models.ManyToManyField(
+        Genre, _("genres"), through="GenreFilmwork")
+    person = models.ManyToManyField(
+        Person, _("persons"), through="PersonFilmwork")
     certificate = models.CharField(
         _("certificate"), max_length=512, blank=True, null=True
     )
-    file_path = models.FileField(_("file"), blank=True, null=True, upload_to="movies/")
+    file_path = models.FileField(
+        _("file"), blank=True, null=True, upload_to="movies/")
     premium = models.BooleanField(default=False)
 
     class Meta:
@@ -92,7 +97,8 @@ class GenreFilmwork(UUIDMixin, TimeStampedCreatedMixin):
     film_work = models.ForeignKey(
         Filmwork, on_delete=models.CASCADE, verbose_name=_("film_work")
     )
-    genre = models.ForeignKey(Genre, verbose_name=_("genre"), on_delete=models.CASCADE)
+    genre = models.ForeignKey(Genre, verbose_name=_(
+        "genre"), on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ["film_work", "genre"]
