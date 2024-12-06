@@ -21,15 +21,3 @@ async def get_rabbitmq_channel():
     finally:
         await channel.close()
 
-
-# TODO Доделать
-# async def get_connection() -> AbstractRobustConnection:
-#     return await aio_pika.connect_robust("amqp://guest:guest@localhost/")
-#
-#
-# connection_pool: Pool = Pool(get_connection, max_size=2)
-#
-#
-# async def get_channel() -> aio_pika.Channel:
-#     async with connection_pool.acquire() as connection:
-#         return await connection.channel()

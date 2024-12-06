@@ -293,6 +293,8 @@ services:
       - auth_service
       - admin_service
       - content_service
+      - notification_service
+      - billing_service
     ports:
       - "80:80"
     volumes:
