@@ -18,7 +18,8 @@ class CustomBackend(BaseBackend):
         url = settings.AUTH_API_LOGIN_URL
         payload = {"login": username, "password": password}
         headers = {"X-Request-Id": str(uuid.uuid4()).replace("-", "")}
-        response = requests.post(url, headers=headers, data=json.dumps(payload))
+        response = requests.post(url, headers=headers,
+                                 data=json.dumps(payload))
         if response.status_code != http.HTTPStatus.OK:
             return None
 

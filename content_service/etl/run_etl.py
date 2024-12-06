@@ -44,7 +44,8 @@ def run_etl_indefinitely():
     )
 
     # Instantiate the components for persons
-    index_manager_persons = IndexManager(configs.es_url, "persons", person_index)
+    index_manager_persons = IndexManager(
+        configs.es_url, "persons", person_index)
     extractor_persons = DataExtractor("person", configs.dsn, configs.batch)
     transformer_persons = DataTransformer()
     loader_persons = DataLoader(configs.es_url, "persons")

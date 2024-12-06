@@ -76,6 +76,7 @@ async def genres(
         )
 
     return [
-        FilmListOutput(uuid=film.uuid, title=film.title, imdb_rating=film.imdb_rating)
+        FilmListOutput(uuid=film.uuid, title=film.title,
+                       imdb_rating=film.imdb_rating)
         for film in films
     ]

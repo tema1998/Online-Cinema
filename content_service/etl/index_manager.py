@@ -15,8 +15,10 @@ class IndexManager:
     def create_index_if_doesnt_exist(self) -> None:
         client = Elasticsearch(hosts=self.elasticsearch_host)
         if not client.indices.exists(index=self.index_name):
-            response = client.indices.create(index=self.index_name, **self.index)
+            response = client.indices.create(
+                index=self.index_name, **self.index)
             if response.get("acknowledged"):
-                logging.info(f"Index {self.index_name} was created successfully.")
+                logging.info(
+                    f"Index {self.index_name} was created successfully.")
             else:
                 logging.error("Error of creating index.")

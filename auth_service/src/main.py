@@ -38,7 +38,8 @@ async def lifespan(app: FastAPI):
 
 def configure_tracer() -> None:
     trace.set_tracer_provider(
-        TracerProvider(resource=Resource.create({SERVICE_NAME: "auth-service"}))
+        TracerProvider(resource=Resource.create(
+            {SERVICE_NAME: "auth-service"}))
     )
     trace.get_tracer_provider().add_span_processor(
         BatchSpanProcessor(

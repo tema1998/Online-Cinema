@@ -73,6 +73,7 @@ class SetUserPremiumRequest(BaseModel):
     user_id: str
     number_of_month: int
 
+
 class UserUpdateRequest(BaseModel):
     login: Optional[str] = None
     old_password: Optional[str] = None
@@ -120,7 +121,8 @@ class RoleCreate(BaseModel):
 class UpdateRoleRequest(BaseModel):
     name: Optional[constr(max_length=50)] = Field(None, description="New name")
     description: Optional[str] = Field(None, description="New description")
-    permissions: Optional[list[str]] = Field(None, description="New permissions")
+    permissions: Optional[list[str]] = Field(
+        None, description="New permissions")
 
 
 class RoleId(BaseModel):

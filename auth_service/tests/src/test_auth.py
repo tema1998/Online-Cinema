@@ -249,7 +249,8 @@ async def test_update_user_credentials(user_service, db_session: AsyncSession):
         access_token = login_response_data["access_token"]
 
         # Step 3: Prepare the update request data
-        update_data = {"new_login": "updateduser", "new_password": "newsecurepassword"}
+        update_data = {"new_login": "updateduser",
+                       "new_password": "newsecurepassword"}
 
         headers = {"Authorization": f"Bearer {access_token}"}
 

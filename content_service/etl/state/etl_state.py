@@ -21,7 +21,8 @@ class StateETL:
 
         # Set date if state doesn't exist.
         if state_modified:
-            logging.info("State received successfully. The ETL process continues.")
+            logging.info(
+                "State received successfully. The ETL process continues.")
         else:
             state_modified = "1800-01-01"
             self.state.set_state(f"{table_name}", state_modified)

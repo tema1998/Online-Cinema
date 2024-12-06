@@ -38,7 +38,8 @@ class BaseConsumer:
             queue = await channel.get_queue(self.queue_name)
             queue_name_dlq = await channel.get_queue(self.queue_name_dlq)
 
-            logging.info(f"Waiting for messages on queue: {self.queue_name_dlq}")
+            logging.info(
+                f"Waiting for messages on queue: {self.queue_name_dlq}")
             await queue_name_dlq.consume(self.handle_message_dlq)
             logging.info(f"Waiting for messages on queue: {self.queue_name}")
             await queue.consume(self.handle_message)

@@ -14,7 +14,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="User",
             fields=[
-                ("password", models.CharField(max_length=128, verbose_name="password")),
+                ("password", models.CharField(
+                    max_length=128, verbose_name="password")),
                 (
                     "last_login",
                     models.DateTimeField(
@@ -32,7 +33,8 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "login",
-                    models.CharField(max_length=255, unique=True, verbose_name="Login"),
+                    models.CharField(
+                        max_length=255, unique=True, verbose_name="Login"),
                 ),
                 ("is_active", models.BooleanField(default=True)),
                 ("is_staff", models.BooleanField(default=False)),

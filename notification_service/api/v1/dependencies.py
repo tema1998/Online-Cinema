@@ -46,7 +46,8 @@ def get_user_info(token: str = Depends(oauth2_scheme)):
         email = payload.get("email")
 
         if not user_id or not email:
-            raise HTTPException(status_code=400, detail="Invalid token payload")
+            raise HTTPException(
+                status_code=400, detail="Invalid token payload")
 
         return {"user_id": user_id, "email": email}
 

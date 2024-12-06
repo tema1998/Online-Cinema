@@ -74,14 +74,16 @@ async def delete_role(
     await role_service.delete_role(role_id)
 
     return JSONResponse(
-        status_code=HTTPStatus.OK, content={"detail": f"Role successfully deleted."}
+        status_code=HTTPStatus.OK, content={
+            "detail": f"Role successfully deleted."}
     )
 
 
 @router.put("/{role_id}", summary="Update the role.", response_model=RoleInDB)
 async def update_role(
     role_id: UUID,
-    new_role_data: UpdateRoleRequest = Body(..., description="New data of role."),
+    new_role_data: UpdateRoleRequest = Body(...,
+                                            description="New data of role."),
     role_service: RoleService = Depends(get_role_service),
     check_permission: str = Depends(only_for_superuser),
 ):
@@ -97,7 +99,8 @@ async def update_role(
 )
 async def assign_role_to_user(
     user_id: UUID,
-    role_data: AssignDeleteUserRoleRequest = Body(..., description="Name of the role."),
+    role_data: AssignDeleteUserRoleRequest = Body(
+        ..., description="Name of the role."),
     role_service: RoleService = Depends(get_role_service),
     check_permission: str = Depends(only_for_superuser),
 ):
@@ -118,7 +121,8 @@ async def assign_role_to_user(
 )
 async def remove_role_from_user(
     user_id: UUID,
-    role_data: AssignDeleteUserRoleRequest = Body(..., description="Name of the role."),
+    role_data: AssignDeleteUserRoleRequest = Body(
+        ..., description="Name of the role."),
     role_service: RoleService = Depends(get_role_service),
     check_permission: str = Depends(only_for_superuser),
 ):

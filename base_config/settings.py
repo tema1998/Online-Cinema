@@ -33,8 +33,10 @@ class BaseProjectSettings(BaseSettings):
     dlx_exchange: str = Field("dlx_exchange", alias="DLX_EXCHANGE")
     default_exchange: str = Field("default_exchange", alias="DLX_EXCHANGE")
 
-    instant_message_dlq: str = Field("instant_message_dlq", alias="INSTANT_MESSAGE_DLQ")
-    instant_message_queue: str = Field("instant_message", alias="INSTANT_MESSAGE_QUEUE")
+    instant_message_dlq: str = Field(
+        "instant_message_dlq", alias="INSTANT_MESSAGE_DLQ")
+    instant_message_queue: str = Field(
+        "instant_message", alias="INSTANT_MESSAGE_QUEUE")
     scheduled_message_queue: str = Field(
         "scheduled_message", alias="SCHEDULED_MESSAGE_QUEUE"
     )
@@ -60,15 +62,22 @@ class BaseProjectSettings(BaseSettings):
     max_retries_dlq: int = Field(5, alias="MAX_RETRIES_DLQ")
 
     # RabbitMQ Billing connection settings
-    rabbitmq_host_billing: str = Field('127.0.0.1', alias='RABBITMQ_BILLING_HOST')
-    rabbitmq_connection_port_billing: int = Field(5672, alias="RABBITMQ_BILLING_CONNECTION_PORT")
-    rabbitmq_management_port_billing: int = Field(15672, alias="RABBITMQ_BILLING_MANAGEMENT_PORT")
-    rabbitmq_default_user_billing: str = Field('guest', alias='RABBITMQ_BILLING_DEFAULT_USER')
-    rabbitmq_default_pass_billing: str = Field('guest', alias='RABBITMQ_BILLING_DEFAULT_PASS')
+    rabbitmq_host_billing: str = Field(
+        '127.0.0.1', alias='RABBITMQ_BILLING_HOST')
+    rabbitmq_connection_port_billing: int = Field(
+        5672, alias="RABBITMQ_BILLING_CONNECTION_PORT")
+    rabbitmq_management_port_billing: int = Field(
+        15672, alias="RABBITMQ_BILLING_MANAGEMENT_PORT")
+    rabbitmq_default_user_billing: str = Field(
+        'guest', alias='RABBITMQ_BILLING_DEFAULT_USER')
+    rabbitmq_default_pass_billing: str = Field(
+        'guest', alias='RABBITMQ_BILLING_DEFAULT_PASS')
 
     # RabbitMQ Billing queue and exchange settings
-    dlx_exchange_billing: str = Field('dlx_exchange_billing', alias='DLX_EXCHANGE_BILLING')
-    default_exchange_billing: str = Field('default_exchange_billing', alias='DEFAULT_EXCHANGE_BILLING')
+    dlx_exchange_billing: str = Field(
+        'dlx_exchange_billing', alias='DLX_EXCHANGE_BILLING')
+    default_exchange_billing: str = Field(
+        'default_exchange_billing', alias='DEFAULT_EXCHANGE_BILLING')
 
     billing_premium_subscription_success_queue: str = Field('billing_premium_subscription_success_queue',
                                                             alias='BILLING_PREMIUM_SUBSCRIPTION_SUCCESS_QUEUE')

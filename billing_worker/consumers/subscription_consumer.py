@@ -30,7 +30,6 @@ class SubscriptionSuccessConsumer(BaseConsumer):
                 await setter_premium_service.make_request_to_change_order_status(order_type, order_id, "Success")
                 await setter_premium_service.make_request_to_notify_on_successful_payment(message_data)
 
-
             except Exception as e:
                 await message.reject(requeue=False)
                 logging.error(f"Error handling message: {str(e)}")
@@ -53,7 +52,6 @@ class SubscriptionFailConsumer(BaseConsumer):
                 order_id = message_data.get("order_id")
                 await setter_premium_service.make_request_to_change_order_status(order_id, "Fail")
                 await setter_premium_service.make_request_to_notify_on_failed_payment(message_data)
-
 
             except Exception as e:
                 await message.reject(requeue=False)

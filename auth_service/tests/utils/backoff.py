@@ -40,7 +40,8 @@ def backoff(
                         start_sleep_time * (factor**retries), border_sleep_time
                     )
                     # Add jitter
-                    delay = computed_delay / 2 + random.uniform(0, computed_delay / 2)
+                    delay = computed_delay / 2 + \
+                        random.uniform(0, computed_delay / 2)
                     if isinstance(e, redis_error):
                         logging.error(msg=f"Redis error. {e}")
                     else:

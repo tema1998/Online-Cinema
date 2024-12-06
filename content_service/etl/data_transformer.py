@@ -62,6 +62,7 @@ class DataTransformer:
                 f"Key error: {e} - ensure the database fields match the model fields."
             )
         except Exception as e:
-            print(f"An unexpected error occurred during data transformation: {e}")
+            print(
+                f"An unexpected error occurred during data transformation: {e}")
 
         return transformed_data

@@ -24,7 +24,7 @@ class YookassaService(PaymentService):
         Configuration.secret_key = self.config.yookassa_secret_key
 
     def create_payment(
-        self, order_id: UUID, total_price: float, customer_email: str, order_type:str
+        self, order_id: UUID, total_price: float, customer_email: str, order_type: str
     ) -> tuple:
         """
         Method for creating payment in Yookassa service.
@@ -89,7 +89,6 @@ class YookassaService(PaymentService):
 
         else:
             logging.info(f"Unknown event: {request['event']}")
-
 
     async def process_film_order_payment(self, request: dict):
         """

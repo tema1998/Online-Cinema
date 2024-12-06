@@ -34,7 +34,8 @@ class MessageService:
             return await self.broker_service.publish(message_body, queue_name)
 
         except Exception as e:
-            raise MessageSendException("Failed to send message to broker: %s" % str(e))
+            raise MessageSendException(
+                "Failed to send message to broker: %s" % str(e))
 
     async def send_welcome_message(
         self, user_email, message: dict, message_transfer, queue_name
@@ -51,7 +52,8 @@ class MessageService:
             return await self.broker_service.publish(message_body, queue_name)
 
         except Exception as e:
-            raise MessageSendException("Failed to send message to broker: %s" % str(e))
+            raise MessageSendException(
+                "Failed to send message to broker: %s" % str(e))
 
     async def send_notification_about_new_comment(
         self, review_id, email, message_data: dict, message_transfer, queue_name
@@ -69,7 +71,8 @@ class MessageService:
             return await self.broker_service.publish(message_body, queue_name)
 
         except Exception as e:
-            raise MessageSendException("Failed to send message to broker: %s" % str(e))
+            raise MessageSendException(
+                "Failed to send message to broker: %s" % str(e))
 
     async def send_notification_about_successful_payment(
         self, order_type: str, email: str, message_data: dict, message_transfer, queue_name
@@ -93,11 +96,11 @@ class MessageService:
             return await self.broker_service.publish(message_body, queue_name)
 
         except Exception as e:
-            raise MessageSendException("Failed to send message to broker: %s" % str(e))
-
+            raise MessageSendException(
+                "Failed to send message to broker: %s" % str(e))
 
     async def send_notification_about_failed_payment(
-        self, order_type:str, email:str, message_data: dict, message_transfer, queue_name
+        self, order_type: str, email: str, message_data: dict, message_transfer, queue_name
     ):
 
         if order_type == "premium":
@@ -119,7 +122,8 @@ class MessageService:
             return await self.broker_service.publish(message_body, queue_name)
 
         except Exception as e:
-            raise MessageSendException("Failed to send message to broker: %s" % str(e))
+            raise MessageSendException(
+                "Failed to send message to broker: %s" % str(e))
 
 
 @lru_cache

@@ -20,7 +20,8 @@ async def main():
             PurchaseFilmFailConsumer()
         ]
 
-        tasks = [asyncio.create_task(consumer.start()) for consumer in consumers]
+        tasks = [asyncio.create_task(consumer.start())
+                 for consumer in consumers]
         await asyncio.gather(*tasks)
 
 

@@ -23,7 +23,8 @@ router = APIRouter()
 )
 @cache(expire=60)
 async def search_films(
-    query: Optional[str] = Query(None, description="Search query for film titles"),
+    query: Optional[str] = Query(
+        None, description="Search query for film titles"),
     film_service: FilmService = Depends(get_film_service),
     pagination: PaginationParams = Depends(PaginationParams),
 ) -> List[FilmListOutput]:
@@ -39,7 +40,8 @@ async def search_films(
         )
 
     return [
-        FilmListOutput(uuid=film.uuid, title=film.title, imdb_rating=film.imdb_rating)
+        FilmListOutput(uuid=film.uuid, title=film.title,
+                       imdb_rating=film.imdb_rating)
         for film in films
     ]
 
@@ -101,7 +103,8 @@ async def film_details(
 )
 @cache(expire=60)
 async def list_films_imbd_sorted(
-    query: Optional[str] = Query(None, description="Search query for film titles"),
+    query: Optional[str] = Query(
+        None, description="Search query for film titles"),
     sort: str = Query(
         "-", description="Sort order ('+' for ascending, '-' for descending)"
     ),
@@ -123,7 +126,8 @@ async def list_films_imbd_sorted(
         )
 
     return [
-        FilmListOutput(uuid=film.uuid, title=film.title, imdb_rating=film.imdb_rating)
+        FilmListOutput(uuid=film.uuid, title=film.title,
+                       imdb_rating=film.imdb_rating)
         for film in films
     ]
 
@@ -151,6 +155,7 @@ async def list_films_imbd_sorted(
         )
 
     return [
-        FilmListOutput(uuid=film.uuid, title=film.title, imdb_rating=film.imdb_rating)
+        FilmListOutput(uuid=film.uuid, title=film.title,
+                       imdb_rating=film.imdb_rating)
         for film in films
     ]

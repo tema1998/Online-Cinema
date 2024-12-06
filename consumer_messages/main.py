@@ -17,7 +17,8 @@ async def main():
             PaymentFailedConsumer()
         ]
 
-        tasks = [asyncio.create_task(consumer.start()) for consumer in consumers]
+        tasks = [asyncio.create_task(consumer.start())
+                 for consumer in consumers]
         await asyncio.gather(*tasks)
 
 

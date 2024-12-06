@@ -9,7 +9,8 @@ T = TypeVar("T")
 
 class PaginationParams(BaseModel):
     page: int = Query(1, description="Page number", gt=0)
-    page_size: int = Query(10, description="Number of items per page", gt=0, le=100)
+    page_size: int = Query(
+        10, description="Number of items per page", gt=0, le=100)
 
     @property
     def skip(self) -> int:

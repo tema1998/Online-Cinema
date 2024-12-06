@@ -22,7 +22,8 @@ router = APIRouter()
     status_code=status.HTTP_201_CREATED,
 )
 async def create_order_premium(
-    order_data: OrderPremiumIn = Body(..., description="Data for creating a purchase order for a premium."),
+    order_data: OrderPremiumIn = Body(
+        ..., description="Data for creating a purchase order for a premium."),
     user_info: Annotated[dict, Depends(get_user_info)] = None,
     order_service: OrderService = Depends(get_order_service),
     payment_service: PaymentService = Depends(get_yookassa_service),
@@ -54,7 +55,8 @@ async def create_order_premium(
     status_code=status.HTTP_201_CREATED,
 )
 async def create_order_film(
-    order_data: OrderFilmIn = Body(..., description="Data for creating a purchase order for a film."),
+    order_data: OrderFilmIn = Body(
+        ..., description="Data for creating a purchase order for a film."),
     user_info: Annotated[dict, Depends(get_user_info)] = None,
     order_service: OrderService = Depends(get_order_service),
     payment_service: PaymentService = Depends(get_yookassa_service),

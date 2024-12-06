@@ -39,7 +39,6 @@ class PaymentSuccessConsumer(BaseConsumer):
                 # Send the email
                 await send_email(recipient, rendered_content)
 
-
             except Exception as e:
                 await message.reject(requeue=False)
                 logging.error(f"Error handling message: {str(e)}")

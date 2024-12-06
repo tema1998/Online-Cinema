@@ -11,7 +11,8 @@ from core.config import config
 
 def decode_token(token: str) -> Optional[dict]:
     try:
-        decoded_token = jwt.decode(token, config.secret_key, algorithms=["HS256"])
+        decoded_token = jwt.decode(
+            token, config.secret_key, algorithms=["HS256"])
         return decoded_token if decoded_token["exp"] >= time.time() else None
     except Exception:
         return None

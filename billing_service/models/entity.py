@@ -37,7 +37,8 @@ class PremiumPurchaseManagement(Base, UUIDMixin, TimeStampedMixin):
     name = Column(String(50), unique=True, nullable=False)
     description = Column(String(255))
     price = Column(DECIMAL, nullable=False)
-    orders: Mapped[List["OrderPurchasePremium"]] = relationship(back_populates="premium_purchase_management")
+    orders: Mapped[List["OrderPurchasePremium"]] = relationship(
+        back_populates="premium_purchase_management")
     is_active = Column(Boolean, default=False)
 
     def __repr__(self) -> str:
@@ -54,11 +55,14 @@ class OrderPurchasePremium(Base, UUIDMixin, TimeStampedMixin):
     user_email = Column(String(255), nullable=True)
     payment_url = Column(String(255), nullable=True)
     payment_id = Column(String(255), nullable=True)
-    premium_purchase_management_id: Mapped[UUID] = mapped_column(ForeignKey("premiums_purchase_management.id"))
-    premium_purchase_management: Mapped["PremiumPurchaseManagement"] = relationship(back_populates="orders")
+    premium_purchase_management_id: Mapped[UUID] = mapped_column(
+        ForeignKey("premiums_purchase_management.id"))
+    premium_purchase_management: Mapped["PremiumPurchaseManagement"] = relationship(
+        back_populates="orders")
 
     def __repr__(self) -> str:
         return f"<Premium purchase order(id='{self.id}')>"
+
 
 class FilmPurchaseManagement(Base, UUIDMixin, TimeStampedMixin):
     __tablename__ = "films_purchase_management"
@@ -66,7 +70,8 @@ class FilmPurchaseManagement(Base, UUIDMixin, TimeStampedMixin):
     name = Column(String(50), unique=True, nullable=False)
     description = Column(String(255))
     price = Column(DECIMAL, nullable=False)
-    orders: Mapped[List["OrderPurchaseFilm"]] = relationship(back_populates="film_purchase_management")
+    orders: Mapped[List["OrderPurchaseFilm"]] = relationship(
+        back_populates="film_purchase_management")
     is_active = Column(Boolean, default=False)
 
     def __repr__(self) -> str:
@@ -83,8 +88,10 @@ class OrderPurchaseFilm(Base, UUIDMixin, TimeStampedMixin):
     film_id = Column(UUID, nullable=False)
     payment_url = Column(String(255), nullable=True)
     payment_id = Column(String(255), nullable=True)
-    film_purchase_management_id: Mapped[UUID] = mapped_column(ForeignKey("films_purchase_management.id"))
-    film_purchase_management: Mapped["FilmPurchaseManagement"] = relationship(back_populates="orders")
+    film_purchase_management_id: Mapped[UUID] = mapped_column(
+        ForeignKey("films_purchase_management.id"))
+    film_purchase_management: Mapped["FilmPurchaseManagement"] = relationship(
+        back_populates="orders")
 
     def __repr__(self) -> str:
         return f"<Film purchase order(id='{self.id}')>"

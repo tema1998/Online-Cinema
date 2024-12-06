@@ -5,7 +5,8 @@ from src.services.role_service import get_role_service, RoleService
 
 
 async def only_for_superuser(
-    access_token: str = Depends(OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")),
+    access_token: str = Depends(
+        OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")),
     role_service: RoleService = Depends(get_role_service),
 ) -> None:
     """

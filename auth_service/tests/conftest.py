@@ -20,7 +20,8 @@ pytest_plugins = [
 ]
 
 # Create the async session factory
-async_session_factory = sessionmaker(class_=AsyncSession, expire_on_commit=False)
+async_session_factory = sessionmaker(
+    class_=AsyncSession, expire_on_commit=False)
 
 
 # Dependency to provide a session to FastAPI routes or other parts of the application
@@ -94,7 +95,8 @@ async def db_session(db_engine):
 @pytest_asyncio.fixture(scope="session")
 async def redis_client():
     """Create a Redis client for testing using test settings."""
-    client = Redis(host=test_settings.redis_host, port=test_settings.redis_port)
+    client = Redis(host=test_settings.redis_host,
+                   port=test_settings.redis_port)
 
     yield client
     await client.flushdb()

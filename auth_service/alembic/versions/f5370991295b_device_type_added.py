@@ -38,10 +38,12 @@ def upgrade() -> None:
     )
     op.create_unique_constraint(None, "roles", ["id"])
     op.add_column(
-        "user_login_history", sa.Column("user_device_type", sa.Text(), nullable=True)
+        "user_login_history", sa.Column(
+            "user_device_type", sa.Text(), nullable=True)
     )
     op.create_unique_constraint(None, "user_roles", ["id"])
-    op.add_column("users", sa.Column("email", sa.String(length=255), nullable=True))
+    op.add_column("users", sa.Column(
+        "email", sa.String(length=255), nullable=True))
     op.alter_column(
         "users", "password", existing_type=sa.VARCHAR(length=255), nullable=True
     )

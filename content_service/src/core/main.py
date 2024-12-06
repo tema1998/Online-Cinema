@@ -58,7 +58,8 @@ async def before_request(request: Request, call_next):
     return response
 
 
-origins = ["http://localhost", "http://localhost:8000", "http://127.0.0.1:8000"]
+origins = ["http://localhost",
+           "http://localhost:8000", "http://127.0.0.1:8000"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -69,8 +70,10 @@ app.add_middleware(
 )
 
 app.include_router(films.router, prefix="/movies/api/v1/films", tags=["films"])
-app.include_router(genres.router, prefix="/movies/api/v1/genres", tags=["genres"])
-app.include_router(persons.router, prefix="/movies/api/v1/persons", tags=["persons"])
+app.include_router(
+    genres.router, prefix="/movies/api/v1/genres", tags=["genres"])
+app.include_router(
+    persons.router, prefix="/movies/api/v1/persons", tags=["persons"])
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080)

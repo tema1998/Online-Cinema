@@ -40,7 +40,8 @@ class OrderService:
             status="Processed",
             user_id=user_info["id"],
             user_email=user_info["email"],
-            total_price=premium_purchase_management_price * order_data["number_of_month"],
+            total_price=premium_purchase_management_price *
+            order_data["number_of_month"],
             premium_purchase_management_id=premium_purchase_management_id,
             number_of_month=order_data["number_of_month"]
         )
@@ -69,7 +70,7 @@ class OrderService:
         if film_purchase_management:
             film_purchase_management_dict = film_purchase_management.to_dict()
             film_purchase_management_id, film_purchase_management_price = (film_purchase_management_dict["id"],
-                                                                                 film_purchase_management_dict["price"])
+                                                                           film_purchase_management_dict["price"])
         else:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -137,7 +138,6 @@ class OrderService:
         updated_order = await self.db.update(order)
 
         return updated_order
-
 
 
 def get_order_service() -> OrderService:
