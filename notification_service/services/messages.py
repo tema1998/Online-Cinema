@@ -104,9 +104,9 @@ class MessageService:
     ):
 
         if order_type == "premium":
-            message_type = "successful_premium_payment"
+            message_type = "failed_premium_payment"
         elif order_type == "film":
-            message_type = "successful_film_payment"
+            message_type = "failed_film_payment"
         else:
             raise MessageSendException("Unknown type of order.")
 

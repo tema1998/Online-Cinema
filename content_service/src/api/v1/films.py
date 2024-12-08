@@ -66,7 +66,7 @@ async def film_details(
         )
 
     # Check if the user has permissions to watch film.
-    if not check_user_permission_for_film(user, film):
+    if not await check_user_permission_for_film(user, film):
         raise HTTPException(
             status_code=HTTPStatus.UNAUTHORIZED,
             detail="This film only for premium users.",

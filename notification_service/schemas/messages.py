@@ -35,8 +35,8 @@ class PeriodicTaskIdRequest(BaseModel):
 class PaymentInfo(BaseModel):
     order_type: str
     order_id: str
-    film_id: str
+    film_id: Optional[str] = None
     user_id: str
     email: EmailStr
-    number_of_month: Optional[int]
+    number_of_month: Optional[int] = None
     created_at: datetime

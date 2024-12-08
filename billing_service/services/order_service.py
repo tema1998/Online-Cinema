@@ -140,6 +140,22 @@ class OrderService:
         return updated_order
 
 
+    async def check_whether_user_bought_film(self, user_id: str, film_id: str) -> bool:
+        """
+        Method for checking whether the user bought film.
+        :param film_id:
+        :param user_id:
+        :return:
+        """
+
+        order = await self.db.fetch_by_query_first_many_conditions(OrderPurchaseFilm, [
+                                                                                        ("user_id", user_id),
+                                                                                       ("film_id", film_id),
+                                                                                       ("status", "Success")])
+        if not order:
+            return False
+        return True
+
 def get_order_service() -> OrderService:
     return OrderService(
         db=PostgresAsyncRepository(dsn=config.dsn),
