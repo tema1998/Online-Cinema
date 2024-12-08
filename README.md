@@ -19,8 +19,8 @@ Billing_rabbitmq_init - Initialization of billing broker's queues.<br/>
 Notification_rabbitmq_init - Initialization of notification broker's queues.<br/>
 Billing_worker - Worker to set premium rights to user, change order's status, make request to notify user about payment status. <br/>
 Consumer_messages - Worker to send notification about new content, payment status.<br/>
-Notification_consumer_recorder_service - Worker to record messages to DB. <br/>
-Nginx - web server software used for reverse proxy, load balancing, and caching. <br/>
+Notification_consumer_recorder_service - Worker to record message's status to DB. <br/>
+Nginx - Web server software used for reverse proxy, load balancing, and caching. <br/>
 Base_config - Main project settings.<br/>
 
 ### Scheme
