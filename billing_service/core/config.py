@@ -11,11 +11,18 @@ class Settings(BaseSettings):
         "BILLING_PROJECT_NAME", "Subscription")
 
     # PG settings
-    pg_user: str = os.getenv("BILLING_DB_USER", "user_subscription")
+    pg_user: str = os.getenv("BILLING_DB_USER", "user_billing")
     pg_pass: str = os.getenv("BILLING_DB_PASSWORD", "123456")
     pg_host: str = os.getenv("BILLING_DB_HOST", "localhost")
     pg_port: int = os.getenv("BILLING_DB_PORT", 5434)
-    pg_db: str = os.getenv("BILLING_DB", "db_subscription")
+    pg_db: str = os.getenv("BILLING_DB", "db_billing")
+
+    # PG test settings
+    pg_user_test: str = os.getenv("BILLING_TEST_DB_USER", "user_billing")
+    pg_pass_test: str = os.getenv("BILLING_TEST_DB_PASSWORD", "123456")
+    pg_host_test: str = os.getenv("BILLING_TEST_DB_HOST", "localhost")
+    pg_port_test: int = os.getenv("BILLING_TEST_DB_PORT", 5434)
+    pg_db_test: str = os.getenv("BILLING_TEST_DB", "db_billing_test")
 
     sqlalchemy_echo: bool = os.getenv("SQLALCHEMY_ECHO", False)
 
@@ -78,6 +85,10 @@ class Settings(BaseSettings):
     @property
     def dsn(self) -> str:
         return f"postgresql+asyncpg://{self.pg_user}:{self.pg_pass}@{self.pg_host}:{self.pg_port}/{self.pg_db}"
+
+    @property
+    def dsn_test(self) -> str:
+        return f"postgresql+asyncpg://{self.pg_user_test}:{self.pg_pass_test}@{self.pg_host_test}:{self.pg_port_test}/{self.pg_db_test}"
 
     @property
     def rabbitmq_billing_connection_url(self) -> str:
