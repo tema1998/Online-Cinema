@@ -1,7 +1,6 @@
 from typing import Any, List, Optional, Type
 from uuid import UUID
 
-# from sqlalchemy.future import select, func
 from sqlalchemy import select, func
 from sqlalchemy import update, delete
 from sqlalchemy.exc import NoResultFound
