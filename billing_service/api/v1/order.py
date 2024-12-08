@@ -3,7 +3,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Body, status, Request
 
-from schemas.entity import OrderPremiumOut, OrderPremiumIn, OrderFilmOut, OrderFilmIn
+from schemas.entity import OrderPremiumOut, OrderPremiumIn, OrderFilmOut, OrderFilmIn, CheckUserFilmIn, CheckUserFilmOut
 from services.payment_service import PaymentService
 from services.token_service import get_user_info
 from services.order_service import OrderService, get_order_service
@@ -114,3 +114,21 @@ async def order_status_change(
     order_id = json_request["order_id"]
     order_status = json_request["order_status"]
     await order_service.update_order_status(order_type, order_id, order_status)
+
+@router.post(
+    "/check-user-film",
+    summary="Check whether the user bought film.",
+    status_code=status.HTTP_200_OK,
+)
+async def check_user_film(
+    order_data: CheckUserFilmIn = Body(
+        ..., description="Data for checking whether the user bought film."),
+    order_service: OrderService = Depends(get_order_service),
+):
+    order_data_dict = order_data.model_dump()
+    user_id = order_data_dict["user_id"]
+    film_id = order_data_dict["film_id"]
+
+    result = await order_service.check_whether_user_bought_film(user_id, film_id)
+
+    return CheckUserFilmOut(result=result)

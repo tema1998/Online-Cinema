@@ -37,3 +37,10 @@ class OrderFilm(OrderFilmIn):
 class OrderFilmOut(OrderFilm):
     created_at: datetime
     payment_url: str
+
+class CheckUserFilmIn(BaseModel):
+    film_id: UUID = Field(None)
+    user_id: UUID = Field(None)
+
+class CheckUserFilmOut(BaseModel):
+    result: bool

@@ -12,5 +12,4 @@ class Settings(BaseProjectSettings):
     billing_service_change_order_status: str = os.getenv("BILLING_SERVICE_CHANGE_ORDER_STATUS",
                                                          "api/v1/order/change-status")
 
-
 settings = Settings()

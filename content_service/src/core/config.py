@@ -26,6 +26,12 @@ class Settings(BaseSettings):
     limit_of_requests_per_minute: int = os.getenv(
         "LIMIT_OF_REQUESTS_PER_MINUTE", 20)
 
+    billing_service_url: str = os.getenv(
+        "BILLING_SERVICE_URL", "http://billing_service:8082/")
+    billing_service_check_whether_user_bought_film: str = os.getenv("BILLING_SERVICE_CHECK_WHETHER_USER_BOUGHT_FILM",
+                                                         "api/v1/order/check-user-film")
+
+
     def es_url(self):
         return f"{self.elastic_schema}{self.elastic_host}:{self.elastic_port}"
 
