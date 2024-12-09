@@ -21,7 +21,7 @@ router = APIRouter()
 )
 async def set_premium_purchase_settings(
     premium_settings_data: PurchaseManageIn = Body(
-    ..., description="Data to set a premium purchase settings."),
+        ..., description="Data to set a premium purchase settings."),
     user_info: Annotated[dict, Depends(get_user_info)] = None,
     manage_service: ManageService = Depends(get_manage_service),
 ):
@@ -36,6 +36,7 @@ async def set_premium_purchase_settings(
 
     return PurchaseManageOut(**premium_purchase_manage.to_dict())
 
+
 @router.post(
     "/set-film-purchase-settings",
     response_model=PurchaseManageOut,
@@ -44,7 +45,7 @@ async def set_premium_purchase_settings(
 )
 async def set_premium_purchase_settings(
     film_settings_data: PurchaseManageIn = Body(
-    ..., description="Data to set a film purchase settings."),
+        ..., description="Data to set a film purchase settings."),
     user_info: Annotated[dict, Depends(get_user_info)] = None,
     manage_service: ManageService = Depends(get_manage_service),
 ):

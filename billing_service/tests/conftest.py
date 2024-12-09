@@ -25,6 +25,7 @@ async def test_db():
     yield
     await engine.dispose()
 
+
 @pytest.fixture
 def mock_order_service():
     """Fixture to mock OrderService."""
@@ -64,6 +65,7 @@ def mock_order_service():
     )
     return mock
 
+
 @pytest.fixture
 async def setup_mock_data(async_session: AsyncSession, test_db):
     """Fixture to populate mock data for testing."""
@@ -83,7 +85,8 @@ async def setup_mock_data(async_session: AsyncSession, test_db):
 def mock_payment_service():
     """Fixture to mock PaymentService."""
     mock = MagicMock(PaymentService)
-    mock.create_payment.return_value = ("payment_id_123", "http://test-payment-url.com")
+    mock.create_payment.return_value = (
+        "payment_id_123", "http://test-payment-url.com")
     return mock
 
 
@@ -95,9 +98,11 @@ def mock_user_info():
         "email": "user@example.com",
     }
 
+
 @pytest.fixture(autouse=True)
 def mock_jwt_bearer(monkeypatch, mock_user_info):
     """Mock the JWTBearer dependency."""
+
     async def mock_call(self, request):
         return mock_user_info
 
@@ -117,9 +122,12 @@ def test_client(mock_order_service, mock_payment_service, mock_user_info, monkey
     async def mock_get_payment_service():
         return mock_payment_service
 
-    monkeypatch.setattr("services.token_service.JWTBearer.__call__", mock_get_user_info)
-    monkeypatch.setattr("services.order_service.get_order_service", lambda: mock_get_order_service)
-    monkeypatch.setattr("services.yookassa_service.get_yookassa_service", lambda: mock_get_payment_service)
+    monkeypatch.setattr(
+        "services.token_service.JWTBearer.__call__", mock_get_user_info)
+    monkeypatch.setattr(
+        "services.order_service.get_order_service", lambda: mock_get_order_service)
+    monkeypatch.setattr(
+        "services.yookassa_service.get_yookassa_service", lambda: mock_get_payment_service)
 
     app.dependency_overrides = {
         JWTBearer: lambda: mock_user_info,

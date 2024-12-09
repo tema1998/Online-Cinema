@@ -41,6 +41,7 @@ def test_order_status_change_film_success(test_client, monkeypatch):
     response = test_client.post("/api/v1/change-status", json=request_data)
     assert response.status_code == 200
 
+
 def test_order_status_change_invalid_order_type(test_client, monkeypatch):
     """Test API behavior with an invalid order type."""
     async def mock_update_order_status(order_type, order_id, order_status):
@@ -60,6 +61,7 @@ def test_order_status_change_invalid_order_type(test_client, monkeypatch):
     response = test_client.post("/api/v1/change-status", json=request_data)
     assert response.status_code == 400
     assert response.json()["detail"] == "Invalid order type"
+
 
 def test_order_status_change_missing_fields(test_client):
     """Test API behavior when fields are missing in the request."""
@@ -84,6 +86,7 @@ def test_order_status_change_invalid_order_id(test_client):
     response = test_client.post("/api/v1/change-status", json=request_data)
     assert response.status_code == 400
     assert response.json()["detail"] == "Invalid order ID format"
+
 
 def test_order_status_change_service_failure(test_client, monkeypatch):
     """Test API behavior when the order service fails."""

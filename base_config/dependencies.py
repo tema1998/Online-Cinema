@@ -20,4 +20,3 @@ async def get_rabbitmq_channel():
         yield channel
     finally:
         await channel.close()
-
