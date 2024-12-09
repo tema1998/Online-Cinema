@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install autopep8
+
+      # Run auto-fix tools
+      - name: Auto-fix with Autopep8
+        run: |
+          autopep8 --in-place --recursive .
+
+      # Run the linters and generate an HTML report
+      - name: Check and Upload Lint Report
+        if: always()  # Ensure this step runs even if the previous step fails
+        run: |
+          if [ -d reports/linting-report ]; then
+            echo "Linting report exists, proceeding to upload."
+          else
+            echo "No linting report found. Creating placeholder."
+            mkdir -p reports/linting-report
+            echo "<html><body>No linting issues detected or linting failed to produce output.</body></html>" > reports/linting-report/index.html
+          fi
+
+      - name: Upload Lint Report
+        if: always()  # Ensure this step runs even if the previous step fails
+        uses: actions/upload-artifact@v3
+        with:
+          name: linting-report
+          path: reports/linting-report
+
+      # Type checking
+      - name: Run mypy type checks
+        run: |
+          mypy . --ignore-missing-imports

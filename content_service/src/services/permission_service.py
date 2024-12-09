@@ -6,6 +6,7 @@ from http import HTTPStatus
 
 from core.config import config
 
+
 async def check_whether_user_bought_film(user_id: str, film_id: str) -> bool:
     """
     Function make request to Billing service and check whether the user bought film.
@@ -19,10 +20,11 @@ async def check_whether_user_bought_film(user_id: str, film_id: str) -> bool:
     }
 
     # try:
-        # Make async request to Billing service
+    # Make async request to Billing service
     async with ClientSession() as session:
         async with session.post(
-                url=config.billing_service_url + config.billing_service_check_whether_user_bought_film,
+                url=config.billing_service_url +
+            config.billing_service_check_whether_user_bought_film,
                 data=json.dumps(body),
                 headers={"Content-Type": "application/json"},
         ) as response:
@@ -45,9 +47,7 @@ async def check_user_permission_for_film(user: dict, film: dict) -> bool:
         if user["is_premium"]:
             return True
         else:
-            #Check whether the user bought film.
+            # Check whether the user bought film.
             result = await check_whether_user_bought_film(user['sub'], film['id'])
             return result
     return True
-
-

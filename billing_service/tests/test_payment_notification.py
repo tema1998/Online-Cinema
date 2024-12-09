@@ -18,7 +18,8 @@ def test_catch_payment_notification_premium_success(test_client, monkeypatch):
         }
     }
 
-    response = test_client.post("/api/v1/payment-notification", json=notification_data)
+    response = test_client.post(
+        "/api/v1/payment-notification", json=notification_data)
     assert response.status_code == 200
 
 
@@ -42,7 +43,8 @@ def test_catch_payment_notification_film_success(test_client, monkeypatch):
         }
     }
 
-    response = test_client.post("/api/v1/payment-notification", json=notification_data)
+    response = test_client.post(
+        "/api/v1/payment-notification", json=notification_data)
     assert response.status_code == 200
 
 
@@ -57,7 +59,8 @@ def test_catch_payment_notification_invalid_order_type(test_client):
         }
     }
 
-    response = test_client.post("/api/v1/payment-notification", json=notification_data)
+    response = test_client.post(
+        "/api/v1/payment-notification", json=notification_data)
     assert response.status_code == 400
     assert response.json()["detail"] == "Invalid order type"
 
@@ -70,7 +73,8 @@ def test_catch_payment_notification_missing_metadata(test_client):
         }
     }
 
-    response = test_client.post("/api/v1/payment-notification", json=notification_data)
+    response = test_client.post(
+        "/api/v1/payment-notification", json=notification_data)
     assert response.status_code == 422
     assert response.json()["detail"][0]["msg"] == "field required"
 
@@ -95,7 +99,8 @@ def test_catch_payment_notification_service_failure(test_client, monkeypatch):
         }
     }
 
-    response = test_client.post("/api/v1/payment-notification", json=notification_data)
+    response = test_client.post(
+        "/api/v1/payment-notification", json=notification_data)
     assert response.status_code == 500
     assert response.json()["detail"] == "Internal Server Error"
 
@@ -106,7 +111,8 @@ def test_catch_payment_notification_missing_object(test_client):
         # Missing "object" key
     }
 
-    response = test_client.post("/api/v1/payment-notification", json=notification_data)
+    response = test_client.post(
+        "/api/v1/payment-notification", json=notification_data)
     assert response.status_code == 422
     assert response.json()["detail"][0]["msg"] == "field required"
 

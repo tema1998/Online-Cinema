@@ -7,6 +7,7 @@ from fastapi.responses import ORJSONResponse
 from starlette.middleware.sessions import SessionMiddleware
 
 from api.v1.order import router as order_router
+from api.v1.manage import router as manage_router
 from core.config import config
 
 
@@ -44,6 +45,10 @@ app.add_middleware(
 app.include_router(
     order_router, prefix="/api/v1/order", tags=["order"]
 )
+app.include_router(
+    manage_router, prefix="/api/v1/manage", tags=["manage"]
+)
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080)

@@ -38,9 +38,22 @@ class OrderFilmOut(OrderFilm):
     created_at: datetime
     payment_url: str
 
+
 class CheckUserFilmIn(BaseModel):
     film_id: UUID = Field(None)
     user_id: UUID = Field(None)
 
+
 class CheckUserFilmOut(BaseModel):
     result: bool
+
+
+class PurchaseManageIn(BaseModel):
+    name: str
+    description: str
+    price: float = Field(gt=0)
+    is_active: bool = True
+
+
+class PurchaseManageOut(PurchaseManageIn):
+    pass
