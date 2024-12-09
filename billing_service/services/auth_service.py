@@ -72,6 +72,7 @@ class AuthService:
             "email": response_json.get("email"),
             "first_name": response_json.get("first_name"),
             "last_name": response_json.get("last_name"),
+            "is_superuser": response_json.get("is_superuser"),
         }
 
 

@@ -44,3 +44,13 @@ class CheckUserFilmIn(BaseModel):
 
 class CheckUserFilmOut(BaseModel):
     result: bool
+
+
+class PurchaseManageIn(BaseModel):
+    name: str
+    description: str
+    price: float = Field(gt=0)
+    is_active: bool = True
+
+class PurchaseManageOut(PurchaseManageIn):
+    pass
