@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install autopep8
+          pip install autopep8 mypy
 
       # Run auto-fix tools
       - name: Auto-fix with Autopep8
